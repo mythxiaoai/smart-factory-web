@@ -1,3 +1,4 @@
+
 # smart-web
 
 > My outstanding Nuxt.js project

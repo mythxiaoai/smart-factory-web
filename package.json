@@ -1,0 +1,33 @@
+{
+  "name": "smart-factory",
+  "version": "1.0.0",
+  "description": "My outstanding Nuxt.js project",
+  "author": "mythxiaoai",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NUXT_ENV_MODE=dev nuxt",
+    "build": "cross-env NUXT_ENV_MODE=build nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.9.5",
+    "@nuxtjs/style-resources": "^1.0.0",
+    "ant-design-vue": "^1.5.0",
+    "enquire.js": "^2.1.6",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "lodash": "^4.17.15",
+    "md5": "^2.2.1",
+    "nuxt": "^2.0.0",
+    "vue-ls": "^3.2.1"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-jest": "^24.1.0",
+    "cross-env": "^7.0.1",
+    "jest": "^24.1.0",
+    "vue-jest": "^4.0.0-0"
+  }
+}

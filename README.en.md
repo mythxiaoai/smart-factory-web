@@ -12,11 +12,17 @@ Software architecture description
 2.  xxxx
 3.  xxxx
 
-#### Instructions
+#### 项目说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 异步传输方式
+1. 遵循resful风格
+> GET（SELECT）：获取
+> POST（CREATE）：新增
+> PUT（UPDATE）：更新全部 建议做文件上传时用这个
+> PATCH（UPDATE）：更新部分  修改用这个
+> DELETE（DELETE）：删除
+
+
 
 #### Contribution
 

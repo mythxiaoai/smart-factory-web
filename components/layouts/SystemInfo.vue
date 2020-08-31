@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="systemInfo" :class="size">
-      <a href="/">
+      <a href="javascript:;">
         <img src="~@/assets/imgs/logo.svg" class="logo" alt="logo" />
         <span class="title">Smart-Factory</span>
       </a>

@@ -1,4 +1,3 @@
-import baseURL from "./assets/config/base.js";
 export default {
   mode: 'spa',
   /*
@@ -15,7 +14,7 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: './assets/imgs/favicon.ico' }]
   },
   /*
    ** Customize the progress-bar color
@@ -51,17 +50,19 @@ export default {
     '@nuxtjs/style-resources',
     '~/modules/api/api-inject.js',
   ],
-  // axios: {
-  //   proxy: true
-  // },
-  // proxy: {
-  //   '/api': {
-  //     target: baseURL,
-  //     pathRewrite:{
-  //       changeOrigin:true
-  //     }
-  //   }
-  // },
+  axios: {
+    proxy: true
+  },
+  proxy: {
+    '/rjgf': {
+      //target: 'http://192.168.130.62:9002/',
+      target: 'http://192.168.110.240:9200/mock/129/',
+      ws: false,
+      changeOrigin: true,
+      secure: false,
+      pathRewrite: {}
+    }
+  },
   styleResources: {
     scss: './assets/variables.scss',
     less: ['./assets/**/*.less']
@@ -95,7 +96,7 @@ export default {
   router: {
     middleware: ['auth'],
     extendRoutes(routes, resolve) {
-      routes.push()
+      //routes.push()
     }
   },
   server: {

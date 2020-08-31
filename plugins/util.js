@@ -27,5 +27,4 @@ export default (content, inject) => {
     //lodash注册
     content.$_=_;
     content.app.$_=_;
-    
 };

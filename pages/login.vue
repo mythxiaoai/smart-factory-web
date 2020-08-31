@@ -36,9 +36,35 @@
         </a-input>
       </a-form-item>
 
-      <a-form-item>
-        <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
-      </a-form-item>
+      <a-row :gutter="0">
+        <a-col :span="16">
+          <a-form-item>
+            <a-input
+              v-decorator="['captcha',{rules: [{ required: true, message: '请输入验证码!'}]}]"
+              size="large"
+              type="text"
+              @change="inputCodeChange"
+              placeholder="请输入验证码"
+            >
+              <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }" />
+            </a-input>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8" style="text-align: right">
+          <img
+            v-if="requestCodeSuccess"
+            style="margin-top: 2px;"
+            :src="randCodeImage"
+            @click="handleChangeCheckCode"
+          />
+          <img
+            v-else
+            style="margin-top: 2px;"
+            src="@/assets/imgs/checkcode.png"
+            @click="handleChangeCheckCode"
+          />
+        </a-col>
+      </a-row>
 
       <a-form-item style="margin-top:24px">
         <a-button
@@ -55,9 +81,9 @@
 </template>
 
 <script>
-import md5 from 'md5'
+// import md5 from 'md5'
 import { mapActions } from 'vuex'
-
+import { HOMEPATH, appId } from '@/assets/config/appConfig.js'
 export default {
   layout: 'login',
   data() {
@@ -66,10 +92,13 @@ export default {
       state: {
         loginBtn: false,
         // login type: 0 email, 1 username, 2 telephone
-      }
+      },
+      randCodeImage: '',
+      requestCodeSuccess: false,
     }
   },
   created() {
+    this.handleChangeCheckCode()
   },
   methods: {
     //...mapActions(['Login', 'Logout']),
@@ -80,30 +109,48 @@ export default {
         state,
       } = this
       state.loginBtn = true
+
       validateFields({ force: true }, (error, values) => {
         if (!error) {
-          const loginParams = { ...values }
-          loginParams.username= values.username
-          loginParams.password = md5(values.password);
-          this.$api.login.login(loginParams).then(res=>{
-            //保存登陆状态
-            console.log(res);
-            return;
-            this.$store.dispatch("security/save",666);
-            const redirect = this.$route.query.redirect || "/";
-            this.$router.push(redirect);
-          }).finally(() => {
+          values.appId = appId
+          values.checkKey = Date.now()
+          this.$api.login.login(values).then((res) => {
+            if (res.success) {
+              this.$store.dispatch('security/saveToken', 666)
+              const redirect = this.$route.query.redirect || HOMEPATH
+              this.$router.push(redirect)
+            } else {
               state.loginBtn = false
+              //用户名密码输错
+              res.message != "验证码错误" && this.handleChangeCheckCode()
+            }
           })
-          
         } else {
           setTimeout(() => {
             state.loginBtn = false
+            //报错刷新验证码
+            this.handleChangeCheckCode()
           }, 600)
         }
       })
-    }
-  }
+    },
+    inputCodeChange(e) {
+      this.inputCodeContent = e.target.value
+    },
+    handleChangeCheckCode() {
+     // this.$axios.get(`/system/open/randomImage`, {key:345});
+
+      this.$api.login
+        .verify({ key: Date.now() })
+        .then((res) => {
+          this.randCodeImage = res.imgStr
+          this.requestCodeSuccess = true
+        })
+        .catch(() => {
+          this.requestCodeSuccess = false
+        })
+    },
+  },
 }
 </script>
 

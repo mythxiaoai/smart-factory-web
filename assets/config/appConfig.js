@@ -24,3 +24,23 @@ export default {
   colorWeak: false,//色盲模式
   multiTab: false,//Tab模式
 }
+
+export const baseURL = window.location.origin+"/rjgf"
+
+//登陆页面配置
+export const LONGINPATH = '/login';
+//首页配置
+export const HOMEPATH = '/';
+
+
+export const appId = "SF";
+
+/**
+新增：add
+修改：update
+删除：delete
+批量删除：dels
+列表查询：list
+上传导入：import
+下载导出：export
+ */

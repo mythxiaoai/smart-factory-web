@@ -39,52 +39,83 @@
         size="middle"
         :columns="columns"
         :dataSource="dataSource"
-        :pagination="ipagination"
+        :pagination="pagination"
         :loading="loading"
-        @change="handleTableChange"
       >
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">
-            <a-icon type="edit" />编辑
-          </a>
-          <a-divider type="vertical" />
-          <a @click="editDictItem(record)">
-            <a-icon type="setting" />字典配置
+        <span slot="operation" slot-scope="text, record">
+          <a @click="handleUpdate(record)">
+            <a-icon type="edit" />修改
           </a>
           <a-divider type="vertical" />
           <a-popconfirm title="确定删除吗?" @confirm="() =>handleDelete(record.id)">
-            <a>删除</a>
+            <a>
+              <a-icon type="delete" />删除
+            </a>
           </a-popconfirm>
         </span>
       </a-table>
     </div>
-    <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal>
-    <dict-item-list ref="dictItemList"></dict-item-list>
-    <dict-delete-list ref="dictDeleteList"></dict-delete-list>-->
+    <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
+    <modal-form ref="modalForm"></modal-form>
   </a-card>
 </template>
 
 <script>
+import modalForm from "./modalForm.vue";
 export default {
-  async asyncData(content) {},
+  async asyncData({ $api }) {},
   fetch({ store, params }) {},
-  created() {},
+  created() {
+    this.list()
+  },
   mounted() {},
-  data: function() {
+  data: function () {
     return {
       queryParam: {
         dictName: '',
-        dictCode: ''
-      }
+        dictCode: '',
+      },
+      pagination:{
+        pageSize:10,
+        current:1,
+        pageTotal:50
+      },
+      loading: false,
+      columns: [
+        { title: '字典名称', dataIndex: 'dictName', key: 'dictName' },
+        { title: '字典编号', dataIndex: 'dictCode', key: 'dictCode' },
+        { title: '备注', dataIndex: 'description', key: 'description' },
+        {
+          title: '操作',
+          key: 'operation',
+          scopedSlots: { customRender: 'operation' },
+        },
+      ],
+      dataSource: [],
     }
   },
-  methods: {},
+  methods: {
+    handleAdd() {},
+    handleUpdate() {
+      this.$refs.modalForm.visible = true;
+    },
+    handleDelete() {},
+    searchQuery() {},
+    searchReset() {},
+    async list() {
+      let { records } = await this.$api.sys.diction.list()
+      this.dataSource = records
+    },
+  },
   computed: {},
   watch: {},
-  components: {}
+  components: {
+    modalForm
+  },
 }
 </script>
 <style scoped lang="less">
+  
 </style>
 <style lang="less">
 .ant-form label {
@@ -110,10 +141,10 @@ export default {
     }
   }
 }
-.table-operator{
+.table-operator {
   margin-bottom: 8px;
   .ant-btn {
-      margin: 0 8px 8px 0;
+    margin: 0 8px 8px 0;
   }
 }
 </style>

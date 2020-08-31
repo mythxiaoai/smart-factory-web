@@ -1,38 +1,43 @@
-import Vue from "vue";
+import Vue from 'vue'
+import "@/plugins/vue-ls.js"
 //需要是函数
 let securityDefault = {
-    token:"",
-    buttonAuth:null,
-    menu:null,
-    userInfo:null
-};
+  token: Vue.ls.get("token"),
+  buttonAuth: null,
+  menu: null,
+  userInfo: null
+}
 export const state = () => {
-  return Vue.ls.get('security')||securityDefault;
+  return Vue.ls.get('security') || securityDefault
 }
 
 export const mutations = {
-  save(state, params) {
-    state=params;
+  saveToken(state, params) {
+    Vue.ls.set('token', params, 7 * 24 * 60 * 60 * 1000)
+    state.token = params
+  },
+  celar(state){
+    Vue.ls.clear('token');
+    state.token = '';
   }
 }
 
 export const actions = {
-  save({ commit, getters }, params) {
-    commit('save', params)
+  saveToken({ commit, getters }, params) {
+    commit('saveToken', params)
   },
   loginout({ commit, dispatch, getters }, u) {
-    console.log("执行loginout");
-    
-    commit('save', securityDefault)
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        commit('celar');
+        resolve();
+      }, 2000);
+    })
   }
 }
 
 export const getters = {
   isLogin(state) {
-    console.log('getters',this)
     return !!state.token
   }
 }
-
-
-

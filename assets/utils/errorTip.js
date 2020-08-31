@@ -1,5 +1,5 @@
 //错误页面的定义与提示，已经自行处理 get请求不会提示
-export const messages ={
+export const messageArr ={
   200:"操作成功",
   403:"抱歉，你无权访问该页面",
   404:"抱歉，你访问的页面不存在或仍在开发中",

@@ -55,8 +55,8 @@ export default {
   },
   proxy: {
     '/rjgf': {
-      //target: 'http://192.168.130.62:9002/',
-      target: 'http://192.168.110.240:9200/mock/129/',
+      target: 'http://192.168.110.241:9122/',
+      //target: 'http://192.168.110.240:9200/mock/122/',
       ws: false,
       changeOrigin: true,
       secure: false,

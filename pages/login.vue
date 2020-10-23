@@ -81,7 +81,7 @@
 </template>
 
 <script>
-// import md5 from 'md5'
+import md5 from 'md5'
 import { mapActions } from 'vuex'
 import { HOMEPATH, appId } from '@/assets/config/appConfig.js'
 export default {
@@ -95,10 +95,12 @@ export default {
       },
       randCodeImage: '',
       requestCodeSuccess: false,
+      checkKey:null,
     }
   },
   created() {
-    this.handleChangeCheckCode()
+    this.handleChangeCheckCode();
+    
   },
   methods: {
     //...mapActions(['Login', 'Logout']),
@@ -112,8 +114,8 @@ export default {
 
       validateFields({ force: true }, (error, values) => {
         if (!error) {
-          values.appId = appId
-          values.checkKey = Date.now()
+          values.appId = appId;
+          values.checkKey = this.checkKey;
           this.$api.login.login(values).then((res) => {
             if (res.success) {
               this.$store.dispatch('security/saveToken', 666)
@@ -138,10 +140,9 @@ export default {
       this.inputCodeContent = e.target.value
     },
     handleChangeCheckCode() {
-     // this.$axios.get(`/system/open/randomImage`, {key:345});
-
+      this.checkKey = md5(Date.now());
       this.$api.login
-        .verify({ key: Date.now() })
+        .verify({ key: this.checkKey})
         .then((res) => {
           this.randCodeImage = res.imgStr
           this.requestCodeSuccess = true

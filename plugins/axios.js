@@ -106,6 +106,9 @@ function axiosFn({ $axios, store, error }) {
   })
 }
 
+
+
+
 //页面级错误
 function errorPage(errData, error) {
   error(errData)
@@ -134,5 +137,7 @@ function isPopMsg(response) {
   }
   return true
 }
+
+
 
 export default axiosFn

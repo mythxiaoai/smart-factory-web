@@ -55,12 +55,13 @@ export default {
   },
   proxy: {
     '/rjgf': {
-      target: 'http://192.168.110.241:9122/',
-      //target: 'http://192.168.110.240:9200/mock/122/',
+      target: 'http://localhost:7001/',
       ws: false,
       changeOrigin: true,
       secure: false,
-      pathRewrite: {}
+      pathRewrite: {
+        '^/rjgf':"/"
+      }
     }
   },
   styleResources: {

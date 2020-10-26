@@ -75,8 +75,7 @@ function axiosFn({ $axios, store, error }) {
     
     if (code >= 200 && code < 300) {
       isMsg && runMessage({ type, message })
-      //每个业务少写一层result
-      response.data = response.data.result;
+      response.data = response.data
       return response
     }
     type = 'error'

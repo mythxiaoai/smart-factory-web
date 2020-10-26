@@ -51,12 +51,12 @@
           </a-form-item>
         </a-col>
         <a-col :span="8" style="text-align: right">
-          <img
+          <span
             v-if="requestCodeSuccess"
-            style="margin-top: 2px;"
-            :src="randCodeImage"
+            style="margin-top: 2px;display:inline-block;"
+            v-html="randCodeImage"
             @click="handleChangeCheckCode"
-          />
+          ></span>
           <img
             v-else
             style="margin-top: 2px;"
@@ -75,6 +75,7 @@
           :loading="state.loginBtn"
           :disabled="state.loginBtn"
         >确定</a-button>
+        <img v-html="randCodeImage"/>
       </a-form-item>
     </a-form>
   </div>
@@ -141,10 +142,12 @@ export default {
     },
     handleChangeCheckCode() {
       this.checkKey = md5(Date.now());
-      this.$api.login
-        .verify({ key: this.checkKey})
-        .then((res) => {
-          this.randCodeImage = res.imgStr
+      this.$api.login.verify({ key: this.checkKey})
+        .then(res => {
+          console.log(1);
+          console.log(this.checkKey);
+          console.log(res);
+          this.randCodeImage = res.result
           this.requestCodeSuccess = true
         })
         .catch(() => {

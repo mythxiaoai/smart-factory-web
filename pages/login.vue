@@ -144,9 +144,6 @@ export default {
       this.checkKey = md5(Date.now());
       this.$api.login.verify({ key: this.checkKey})
         .then(res => {
-          console.log(1);
-          console.log(this.checkKey);
-          console.log(res);
           this.randCodeImage = res.result
           this.requestCodeSuccess = true
         })

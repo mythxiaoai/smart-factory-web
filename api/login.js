@@ -1,7 +1,7 @@
 module.exports={
     //登陆
     login(params){
-        return this.$axios.$post('/system/captchaLogin', params);
+        return this.$axios.$post('/sys/login', params);
     },
     //退出登陆
     loginout(params){
@@ -10,6 +10,6 @@ module.exports={
     //验证码  get请求需要设置parmas参数
     verify(params){
         console.log(params);
-        return this.$axios.$get(`/system/open/randomImage`, {params});
+        return this.$axios.$get(`/sys/randomImage`, {params});
     }
 }

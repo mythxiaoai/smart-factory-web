@@ -65,6 +65,7 @@ function axiosFn({ $axios, store, error }) {
   response
   */
   $axios.onResponse((response) => {
+    console.log(response);
     //config data headers request
     let type = 'success'
     let url = response.config.url
@@ -72,11 +73,9 @@ function axiosFn({ $axios, store, error }) {
     let { code, message } = response.data
     //赋值默认值
     message = message || messageArr[code];
-    
     if (code >= 200 && code < 300) {
       isMsg && runMessage({ type, message })
-      //每个业务少写一层result
-      response.data = response.data.result;
+      response.data = response.data;
       return response
     }
     type = 'error'
@@ -89,7 +88,7 @@ function axiosFn({ $axios, store, error }) {
     if (code === 1002) {
       runNotification({ type, code, url, message })
       store.dispatch('security/loginout').then(v=>{
-        window.location.reload();
+        window.location.href =  `${window.location.origin}?redirect=${window.location.pathname}`
       })
       return response
     }

@@ -9,40 +9,47 @@
     cancelText="关闭"
   >
     <a-spin :spinning="confirmLoading">
-      <a-form-model :model="form" :rules="rules">
+      <a-form-model ref="formModel" :model="form" :rules="rules">
         <a-form-model-item
           label="字典名称"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
-          props="name"
+          prop="dictName"
         >
-          <a-input placeholder="请输入字典名称" v-model="form.name" />
+          <a-input placeholder="请输入字典名称" v-model="form.dictName" />
         </a-form-model-item>
+
         <a-form-model-item
           label="字典编号"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
-          props="keyWord"
+          prop="dictCode"
         >
-          <a-input placeholder="请输入字典编号" v-model="form.keyWord" />
+          <a-input placeholder="请输入字典编号" v-model="form.dictCode" />
         </a-form-model-item>
+
         <a-form-model-item
           label="是否启用"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
-          props="status"
+          prop="status"
         >
-          <a-switch checked v-model="form.status" />
+          <a-switch
+            @change="form.status = form.statusShow ? 1 : 0"
+            v-model="form.statusShow"
+            checked-children="启用"
+            un-checked-children="禁用"
+          />
         </a-form-model-item>
         <a-form-model-item
           label="备注"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
-          props="description"
+          prop="description"
         >
           <a-input placeholder="请输入关键词" v-model="form.description" />
         </a-form-model-item>
@@ -50,38 +57,56 @@
 
         <a-row type="flex" class="m-b" justify="center" :gutter="15">
           <a-col
-            v-for="(item,index) in multiterm.label"
+            v-for="(item, index) in multiterm.label"
             :key="index"
             :flex="1"
             class="text-c"
-          >{{item}}</a-col>
+            >{{ item }}</a-col
+          >
           <a-col flex="0 1 100px" class="text-c">操作</a-col>
         </a-row>
         <a-row
           type="flex"
           justify="center"
           :gutter="15"
-          v-for="(item,index) in multitermData"
+          v-for="(item, index) in multitermData"
           :key="index"
         >
-          <a-col :flex="1" v-for="(key) in Object.keys(item)" :key="key">
-            <a-form-model-item hasFeedback>
-              <a-input v-model="form.sub[index][key]" />
+          <a-col :flex="1" v-for="key in Object.keys(item)" :key="key">
+            <a-form-model-item
+              hasFeedback
+              :prop="`dictItemList[${index}][${key}]`"
+            >
+              <a-input v-if="key==='sortOrder'" v-model.number="form.dictItemList[index][key]" />
+              <a-input v-else v-model="form.dictItemList[index][key]" />
             </a-form-model-item>
           </a-col>
 
           <a-col flex="0 1 100px" class="text-c">
             <a-form-model-item hasFeedback>
               <a-button-group>
-                <a-popconfirm v-if="hasValue(index)" title="确定删除吗?" @confirm="minus(index)">
-                  <a-button icon="minus" v-show="multitermData.length>1"></a-button>
+                <a-popconfirm
+                  v-if="hasValue(index)"
+                  title="确定删除吗?"
+                  @confirm="minus(index)"
+                >
+                  <a-button
+                    icon="minus"
+                    v-show="multitermData.length > 1"
+                  ></a-button>
                 </a-popconfirm>
-                <a-button v-else icon="minus" v-show="multitermData.length>1" @click="minus(index)"></a-button>
+                <a-button
+                  v-else
+                  icon="minus"
+                  v-show="multitermData.length > 1"
+                  @click="minus(index)"
+                ></a-button>
                 <a-button icon="plus" @click="plus(index)"></a-button>
               </a-button-group>
             </a-form-model-item>
           </a-col>
         </a-row>
+        {{ form }}
         <!-- <a-row type="flex" class="m-b" justify="center" :gutter="15">
           <a-col :flex="1" class="text-c">键</a-col>
           <a-col :flex="1" class="text-c">值</a-col>
@@ -121,12 +146,43 @@
 </template>
 
 <script>
+
+
+
+let Oform = {
+        dictName: '',
+        dictCode: '',
+        status: 1,
+        delFlag:0,
+        statusShow: true,
+        description: '',
+        dictItemList: [
+          { itemText: '', itemValue: '',sortOrder:1}
+        ],
+      };
 export default {
   name: 'modalForm',
   data() {
+    let unique1 = async (rule, value, callback) => {
+      let res = await this.$api.sys.diction.verify1({
+        dictId: this.form.id,
+        dictCode: this.form.dictCode,
+      })
+      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+    }
+    let unique2 = async (rule, value, callback) => {
+      let res = await this.$api.sys.diction.verify2({
+        dictId: this.form.id||"",
+        dictItemId: rule.id,
+        dictItemCode: value,
+      })
+      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+    }
+
     return {
+      unique2,
       title: '操作',
-      visible: true,
+      visible: false,
       model: {},
       labelCol: {
         xs: { span: 24 },
@@ -138,28 +194,59 @@ export default {
       },
       confirmLoading: false,
       form: {
-        name: '',
-        keyWord: '',
-        status: '',
+        dictName: '',
+        dictCode: '',
+        status: 1,
+        delFlag:0,
+        statusShow: true,
         description: '',
-        sub: [
-          { id: 1, key: '1', value: '男' },
-          { id: 2, key: '2', value: '女' },
+        dictItemList: [
+          { itemText: '', itemValue: '',sortOrder:1}
         ],
       },
-      rules: {},
-      validatorRules: {},
+      rules: {
+        dictName: [{ required: true, message: '不能为空~' }],
+        dictCode: [
+          { required: true, message: '不能为空~', trigger: 'blur' },
+          { validator: unique1, trigger: 'blur' },
+        ],
+        nonEmpty: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+        verify: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+        dictItemList: [
+          {
+            itemText: [
+              { required: true, message: '不能为空~',},
+            ],
+            itemValue: [
+              { required: true, message: '不能为空~',},
+            ],
+          },
+        ],
+      },
       multiterm: {
-        label: ['键', '值'],
+        label: ['键', '值', '排序'],
         visible: [false, false],
-        showKey: ['key', 'value'],
+        showKey: ['itemText', 'itemValue', 'sortOrder'],
       },
     }
   },
   created() {},
   computed: {
     multitermData() {
-      return this.form.sub.map((v) => {
+      //rules的同步  id传入
+      let len = this.form.dictItemList.length;
+      let arr = []
+      for (let i = 0; i < len; i++) {
+        arr.push({
+          itemText: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+          itemValue: [
+            { required: true, message: '不能为空~', trigger: 'blur' },{ validator: this.unique2, trigger: 'blur',id:this.form.dictItemList[i].id||""},
+          ],
+        })
+      }
+      this.rules.dictItemList = arr;
+
+      return this.form.dictItemList.map((v) => {
         let json = {}
         this.multiterm.showKey.forEach((key) => {
           json[key] = v[key]
@@ -175,70 +262,46 @@ export default {
     },
     update(record) {
       this.visible = true
-      this.title = '修改'
-      // this.form.resetFields();
-      // this.model = Object.assign({}, record);
-      // this.visible = true;
-      // this.$nextTick(() => {
-      //   this.form.setFieldsValue(pick(this.model, "name", "keyWord", "sex", "age", "email", "content"));
-      //   //时间格式化
-      //   this.form.setFieldsValue({ punchTime: this.model.punchTime ? moment(this.model.punchTime, "YYYY-MM-DD HH:mm:ss") : null });
-      //   this.form.setFieldsValue({ birthday: this.model.birthday ? moment(this.model.birthday) : null });
-      // });
     },
     close() {
-      this.$emit('close')
       this.visible = false
+      // 值还原
+      this.form = JSON.Parse(JSON.stringify(this.Oform));
+      //取消验证状态
+      this.$refs.formModel.clearValidate();
+      //this.$utils.fromReset(this.form);
+      
     },
     handleOk() {
-      const that = this
       // 触发表单验证
-      this.form.validateFields((err, values) => {
-        console.log(values)
-        return
-        if (!err) {
-          that.confirmLoading = true
-          let httpurl = ''
-          let method = ''
-          if (!this.model.id) {
-            httpurl += this.url.add
-            method = 'post'
-          } else {
-            httpurl += this.url.edit
-            method = 'put'
-          }
-          let formData = Object.assign(this.model, values)
-          //时间格式化
-          formData.punchTime = formData.punchTime
-            ? formData.punchTime.format('YYYY-MM-DD HH:mm:ss')
-            : null
-          formData.birthday = formData.birthday
-            ? formData.birthday.format()
-            : null
+      this.$refs.formModel.validate(async (valid) => {
+        if(!valid)return;
+        this.confirmLoading = true
+        //字典
+        const http = this.form.id?this.$api.sys.diction.edit:this.$api.sys.diction.add;
+        this.form.$msg = "none";//不弹通知
+        let res = await http(this.form);
+        //字典项
+        let promiseArr = [];
+        this.form.dictItemList.map(v=>{
+          const http = v.id?this.$api.sys.diction.editItem:this.$api.sys.diction.addItem;
+          //编辑和新增都加上字典的id
+          v.dictId = this.form.id;
+          promiseArr.push(http(v));
+        })
+        res = await Promise.all(promiseArr);
+        console.log(res);
+        this.confirmLoading = false
 
-          console.log(formData)
-          httpAction(httpurl, formData, method)
-            .then((res) => {
-              if (res.success) {
-                that.$message.success(res.message)
-                that.$emit('ok')
-              } else {
-                that.$message.warning(res.message)
-              }
-            })
-            .finally(() => {
-              that.confirmLoading = false
-              that.close()
-            })
-        }
+        this.close();
+        this.$emit("refresh");
       })
     },
     handleCancel() {
       this.close()
     },
     handleVisibleChange(index) {
-      console.log(index)
-      let value = this.form.getFieldValue(`sub`)[index]
+      let value = this.form.getFieldValue(`dictItemList`)[index]
       value = Object.values(value).join('')
       if (value) {
         this.showPop(index)
@@ -253,22 +316,21 @@ export default {
     showPop(index) {
       this.multiterm.visible.splice(index, 1, true)
     },
-    minus(index) {
-      console.log(this.form)
-      this.form.sub.splice(index, 1)
+    async minus(index) {
+      console.log(this.form.dictItemList[index].id);
+      if(this.form.dictItemList[index].id){
+        const res = await this.$api.sys.diction.delItem([this.form.dictItemList[index].id])
+      }
+      this.form.dictItemList.splice(index, 1)
       this.multiterm.visible.splice(index, 1)
-      // this.form.setFieldsValue({ sub: this.multiterm.data })
     },
     plus(index) {
-      console.log(index)
-      console.log(this.form)
       //split长度为0会插入当前值的前面
-      this.form.sub.splice(index + 1, 0, { key: '', value: '' })
+      this.form.dictItemList.splice(index + 1, 0, { itemText: '', itemValue: '' })
       this.multiterm.visible.splice(index + 1, 0, false)
-      // this.form.setFieldsValue({ sub: this.multiterm.data });
     },
     hasValue: function (index) {
-      return this.form.sub[index].key + this.form.sub[index].value
+      return this.form.dictItemList[index].id
     },
   },
 }

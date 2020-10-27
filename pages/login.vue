@@ -118,7 +118,8 @@ export default {
           values.checkKey = this.checkKey;
           this.$api.login.login(values).then((res) => {
             if (res.success) {
-              this.$store.dispatch('security/saveToken', 666)
+              console.log(HOMEPATH);
+              this.$store.dispatch('security/saveToken', res.result.token);
               const redirect = this.$route.query.redirect || HOMEPATH
               this.$router.push(redirect)
             } else {
@@ -144,7 +145,7 @@ export default {
       this.$api.login
         .verify({ key: this.checkKey})
         .then((res) => {
-          this.randCodeImage = res.imgStr
+          this.randCodeImage = res.result.imgStr
           this.requestCodeSuccess = true
         })
         .catch(() => {

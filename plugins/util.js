@@ -18,6 +18,36 @@ Vue.filter('time', function (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dataStr).format(pattern)
 })
 
+
+/**
+ * val 参数  是任意类型
+ * 作用:form表单清空   所有对象   支持深层！
+ */
+function fromReset(val) {
+	if (typeof val == "string") {
+		val = "";
+	} else if (typeof val == "object") {
+		if (Array.isArray(val)) {
+			val = [];
+		} else if (val == null) {
+			val = null;
+		} else {
+			for (var key in val) {
+				if (val.hasOwnProperty(key)) {
+					val[key] = fromReset(val[key])
+				}
+			}
+		}
+	} else if (typeof val == "boolean") {
+		val = false;
+	} else if (typeof val == "number") {
+		val = 0;
+	} else {
+		val = "";
+	}
+	return val
+}
+
 export default (content, inject) => {
     //常用插件注册
     //moment注册
@@ -25,6 +55,9 @@ export default (content, inject) => {
         return moment(str);
     });
     //lodash注册
-    content.$_=_;
-    content.app.$_=_;
+      inject("_", _);
+      //工具类
+      inject("utils", {
+        fromReset
+      });
 };

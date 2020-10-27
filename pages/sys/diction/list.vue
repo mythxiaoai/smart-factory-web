@@ -95,6 +95,7 @@ export default {
       queryParam: {
         dictName: '',
         dictCode: '',
+        pageNo:1,
       },
       pagination: {
         pageSize: 10,
@@ -134,33 +135,32 @@ export default {
       this.$refs.modalForm.form = result;
     },
     pagingChange({current}){
-      this.list({
-        pageNo:current,
-        ...this.queryParam
-      });
+      this.queryParam.pageNo = current;
+      this.pagination.current = current;
+      this.list();
     },
-    handleDelete() {},
+    async handleDelete(id) {
+      await this.$api.sys.diction.del([id]);
+      this.list();
+    },
     searchQuery() {
-      this.list({
-        pageNo:1,
-        ...this.queryParam
-      });
+      this.queryParam.pageNo = 1
+      this.pagination.current = 1;
+      this.list();
     },
     searchReset() {
       this.queryParam = {
         dictName: '',
         dictCode: '',
+        pageNo: 1,
       }
-      this.searchQuery();
+      this.pagination.current = 1;
+      this.list();
     },
-    async list(parmas) {
-      let { result } = await this.$api.sys.diction.list(parmas)
+    async list() {
+      let { result } = await this.$api.sys.diction.list(this.queryParam)
       this.dataSource = result.records;
-      this.pagination = {
-        pageSize: result.size,
-        current: result.current,
-        total: result.total
-      }
+      this.pagination.total = result.total;
     },
   },
   computed: {},

@@ -17,7 +17,7 @@ module.exports={
     },
     //删除-字典
      del(params){
-        return  this.$axios.$delete('/system/sys/dict/deleteBatch', params);
+        return  this.$axios.$delete('/system/sys/dict/deleteBatch', {data:params});
     },
     //修改-字典
      edit(params){

@@ -77,7 +77,10 @@
               hasFeedback
               :prop="`dictItemList[${index}][${key}]`"
             >
-              <a-input v-if="key==='sortOrder'" v-model.number="form.dictItemList[index][key]" />
+              <a-input
+                v-if="key === 'sortOrder'"
+                v-model.number="form.dictItemList[index][key]"
+              />
               <a-input v-else v-model="form.dictItemList[index][key]" />
             </a-form-model-item>
           </a-col>
@@ -106,7 +109,6 @@
             </a-form-model-item>
           </a-col>
         </a-row>
-        {{ form }}
         <!-- <a-row type="flex" class="m-b" justify="center" :gutter="15">
           <a-col :flex="1" class="text-c">键</a-col>
           <a-col :flex="1" class="text-c">值</a-col>
@@ -146,20 +148,15 @@
 </template>
 
 <script>
-
-
-
 let Oform = {
-        dictName: '',
-        dictCode: '',
-        status: 1,
-        delFlag:0,
-        statusShow: true,
-        description: '',
-        dictItemList: [
-          { itemText: '', itemValue: '',sortOrder:1}
-        ],
-      };
+  dictName: '',
+  dictCode: '',
+  status: 1,
+  delFlag: 0,
+  statusShow: true,
+  description: '',
+  dictItemList: [{ itemText: '', itemValue: '', sortOrder: 1 }],
+}
 export default {
   name: 'modalForm',
   data() {
@@ -171,16 +168,35 @@ export default {
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
     let unique2 = async (rule, value, callback) => {
+      //本地输入校验
+      let i = 0
+      this.form.dictItemList.forEach((v) => {
+        i = 0
+        this.form.dictItemList.forEach((k) => {
+          if (v.itemValue == k.itemValue) {
+            i++
+            if (i == 2) {
+              callback(new Error('需要保证值唯一'))
+              return
+            }
+          }
+        })
+      })
+      callback()
+    }
+
+    let unique3 = async (rule, value, callback) => {
+      //异步校验
       let res = await this.$api.sys.diction.verify2({
-        dictId: this.form.id||"",
+        dictId: this.form.id || '',
         dictItemId: rule.id,
         dictItemCode: value,
       })
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
-
     return {
       unique2,
+      unique3,
       title: '操作',
       visible: false,
       model: {},
@@ -197,12 +213,10 @@ export default {
         dictName: '',
         dictCode: '',
         status: 1,
-        delFlag:0,
+        delFlag: 0,
         statusShow: true,
         description: '',
-        dictItemList: [
-          { itemText: '', itemValue: '',sortOrder:1}
-        ],
+        dictItemList: [{ itemText: '', itemValue: '', sortOrder: 1 }],
       },
       rules: {
         dictName: [{ required: true, message: '不能为空~' }],
@@ -214,12 +228,8 @@ export default {
         verify: [{ required: true, message: '不能为空~', trigger: 'blur' }],
         dictItemList: [
           {
-            itemText: [
-              { required: true, message: '不能为空~',},
-            ],
-            itemValue: [
-              { required: true, message: '不能为空~',},
-            ],
+            itemText: [{ required: true, message: '不能为空~' }],
+            itemValue: [{ required: true, message: '不能为空~' }],
           },
         ],
       },
@@ -234,17 +244,26 @@ export default {
   computed: {
     multitermData() {
       //rules的同步  id传入
-      let len = this.form.dictItemList.length;
+      let len = this.form.dictItemList.length
       let arr = []
       for (let i = 0; i < len; i++) {
         arr.push({
           itemText: [{ required: true, message: '不能为空~', trigger: 'blur' }],
           itemValue: [
-            { required: true, message: '不能为空~', trigger: 'blur' },{ validator: this.unique2, trigger: 'blur',id:this.form.dictItemList[i].id||""},
+            { required: true, message: '不能为空~', trigger: 'blur' },
+            {
+              validator: this.unique2,
+              trigger: 'blur',
+            },
+            {
+              validator: this.unique3,
+              trigger: 'blur',
+              id: this.form.dictItemList[i].id || '',
+            },
           ],
         })
       }
-      this.rules.dictItemList = arr;
+      this.rules.dictItemList = arr
 
       return this.form.dictItemList.map((v) => {
         let json = {}
@@ -266,35 +285,40 @@ export default {
     close() {
       this.visible = false
       // 值还原
-      this.form = JSON.Parse(JSON.stringify(this.Oform));
+      this.form = JSON.parse(JSON.stringify(Oform))
       //取消验证状态
-      this.$refs.formModel.clearValidate();
+      this.$refs.formModel.clearValidate()
       //this.$utils.fromReset(this.form);
-      
     },
     handleOk() {
       // 触发表单验证
       this.$refs.formModel.validate(async (valid) => {
-        if(!valid)return;
+        if (!valid) return
         this.confirmLoading = true
         //字典
-        const http = this.form.id?this.$api.sys.diction.edit:this.$api.sys.diction.add;
-        this.form.$msg = "none";//不弹通知
-        let res = await http(this.form);
+        const http = this.form.id
+          ? this.$api.sys.diction.edit
+          : this.$api.sys.diction.add
+        this.form.$msg = 'none' //不弹通知
+        let res = await http(this.form)
+        //做新增  先添加父id  在搞事
+        if (res.result) this.form.id = res.result.id
         //字典项
-        let promiseArr = [];
-        this.form.dictItemList.map(v=>{
-          const http = v.id?this.$api.sys.diction.editItem:this.$api.sys.diction.addItem;
+        let promiseArr = []
+        this.form.dictItemList.map((v) => {
+          const http = v.id
+            ? this.$api.sys.diction.editItem
+            : this.$api.sys.diction.addItem
           //编辑和新增都加上字典的id
-          v.dictId = this.form.id;
-          promiseArr.push(http(v));
+          v.dictId = this.form.id
+          promiseArr.push(http(v))
         })
-        res = await Promise.all(promiseArr);
-        console.log(res);
+        res = await Promise.all(promiseArr)
+        console.log(res)
         this.confirmLoading = false
 
-        this.close();
-        this.$emit("refresh");
+        this.close()
+        this.$emit('refresh')
       })
     },
     handleCancel() {
@@ -317,16 +341,21 @@ export default {
       this.multiterm.visible.splice(index, 1, true)
     },
     async minus(index) {
-      console.log(this.form.dictItemList[index].id);
-      if(this.form.dictItemList[index].id){
-        const res = await this.$api.sys.diction.delItem([this.form.dictItemList[index].id])
+      console.log(this.form.dictItemList[index].id)
+      if (this.form.dictItemList[index].id) {
+        const res = await this.$api.sys.diction.delItem([
+          this.form.dictItemList[index].id,
+        ])
       }
       this.form.dictItemList.splice(index, 1)
       this.multiterm.visible.splice(index, 1)
     },
     plus(index) {
       //split长度为0会插入当前值的前面
-      this.form.dictItemList.splice(index + 1, 0, { itemText: '', itemValue: '' })
+      this.form.dictItemList.splice(index + 1, 0, {
+        itemText: '',
+        itemValue: '',
+      })
       this.multiterm.visible.splice(index + 1, 0, false)
     },
     hasValue: function (index) {

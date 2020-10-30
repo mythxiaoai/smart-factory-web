@@ -1,36 +1,39 @@
 import Vue from 'vue'
-import {LONGINPATH , HOMEPATH} from '@/assets/config/appConfig.js'
+import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
 
-const whiteRoute = ['/login'];//不转发的白名单路由
+const whiteRoute = ['/login'] //不转发的白名单路由
 export default function(content) {
-  const currPath = content.route.path;
-  const router = content.app.router;
+  const fromRoute = content.from
+  const currRoute = content.route
+  const router = content.app.router
   return new Promise((resolve, reject) => {
-    if(Vue.ls.get("token")){
-      if (currPath === LONGINPATH) {
-        resolve();
-      }else{
-          //菜单权限的加载
-          resolve();
-      }
-      
-    }else{
-      if(~whiteRoute.indexOf(currPath)){
-        resolve();
-      }else{
-        currPath==HOMEPATH?
-        router.push({ path: LONGINPATH}):
-        router.push({ path: LONGINPATH, query: { redirect:currPath }});
-        resolve();
-      }
+    //如果是登陆或者是白名单内  是否登陆都去跳转
+    const isLogin = !!Vue.ls.get('token')
+    if (~whiteRoute.indexOf(currRoute.path)) {
+      content.next();
+      resolve();
+      return;
+    }
+    
+    //没有登陆
+    if (isLogin) {
+      //菜单权限的加载
+      resolve();
+      return;
+    } else {
+      currRoute.path == HOMEPATH
+        ? router.push({ path: LONGINPATH })
+        : router.push({ path: LONGINPATH, query: { redirect: currRoute.path } })
+      resolve();
+      return;
     }
   })
-  reject();
-//   Vue.mixin({
-//    mounted() {
-//       this.$nuxt.setLayout('home')
-//     }
-//   })
+  reject()
+  //   Vue.mixin({
+  //    mounted() {
+  //       this.$nuxt.setLayout('home')
+  //     }
+  //   })
 }
 
 //设置默认布局为home layout
@@ -41,9 +44,6 @@ export default function(content) {
 //      window.$nuxt.setLayout('home');
 //   }
 // })
-
-
-
 
 // NProgress.configure({ showSpinner: false }) // NProgress Configuration
 

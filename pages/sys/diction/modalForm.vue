@@ -168,21 +168,22 @@ export default {
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
     let unique2 = async (rule, value, callback) => {
-      //本地输入校验
-      let i = 0
-      this.form.dictItemList.forEach((v) => {
-        i = 0
-        this.form.dictItemList.forEach((k) => {
-          if (v.itemValue == k.itemValue) {
-            i++
-            if (i == 2) {
-              callback(new Error('需要保证值唯一'))
-              return
+      return new Promise((resolve, reject) =>{
+        //本地输入校验
+        let i = 0
+        this.form.dictItemList.forEach((v) => {
+          i = 0
+          this.form.dictItemList.forEach((k) => {
+            if (v.itemValue == k.itemValue) {
+              i++
+              if (i == 2) {
+                reject("需要保证值唯一")
+              }
             }
-          }
+          })
         })
+        resolve()
       })
-      callback()
     }
 
     let unique3 = async (rule, value, callback) => {
@@ -192,7 +193,11 @@ export default {
         dictItemId: rule.id,
         dictItemCode: value,
       })
-      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+      if(!res.result){
+          return Promise.resolve();
+      }else{
+          return Promise.reject("需要保证值唯一");
+      }
     }
     return {
       unique2,
@@ -252,11 +257,11 @@ export default {
           itemValue: [
             { required: true, message: '不能为空~', trigger: 'blur' },
             {
-              validator: this.unique2,
+              asyncValidator: this.unique2,
               trigger: 'blur',
             },
             {
-              validator: this.unique3,
+              asyncValidator: this.unique3,
               trigger: 'blur',
               id: this.form.dictItemList[i].id || '',
             },

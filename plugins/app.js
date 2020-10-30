@@ -11,3 +11,4 @@ export default ({store}, inject) => {
         store.commit("app/setDevice",type);
     })
 };
+

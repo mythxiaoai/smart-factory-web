@@ -4,39 +4,32 @@
       <template #table-operator>
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
       </template>
-
-      <table-page
-        slot="expandedRowRender"
-        slot-scope="text"
-        :columns="innerColumns"
-        :data-source="text.dictItemList"
-        :pagination="false"
-      >
-      </table-page>
-
-      <span slot="operation" slot-scope="text">
-        <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
-        <a-divider type="vertical" />
-        <a-popconfirm
-          title="确定删除吗?"
-          @confirm="() => handleDelete(text.id)"
-        >
-          <a> <a-icon type="delete" />删除 </a>
-        </a-popconfirm>
-      </span>
+        <span slot ="operation"  slot-scope = "text,record,index">
+          <!-- {{text}}-----1<br>
+          {{record}}-----2<br>
+          {{index}}----3 -->
+          <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
+          <a-divider type="vertical" />
+          <a-popconfirm
+            title="确定删除吗?"
+            @confirm="() => handleDelete(text.id)"
+          >
+            <a> <a-icon type="delete" />删除 </a>
+          </a-popconfirm>
+        </span>
     </table-page>
-    <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
-    <modal-form ref="modalForm" @refresh="list"></modal-form>
   </a-card>
 </template>
 
 <script>
-import modalForm from './modalForm.vue'
 export default {
   async asyncData({ $api }) {},
   fetch({ store, params }) {},
   created() {
-    this.list()
+    this.tablePageConfig.getAsyncDate = async (params, next) => {
+      let { result } = await this.$api.sys.diction.list(params)
+      next(result.records, result.total)
+    }
   },
   mounted() {},
   data: function () {
@@ -48,20 +41,24 @@ export default {
             options: {
               label: '字典名称',
               prop: 'dictName',
+              defaultValue: '',
             },
             attrs: {
               placeholder: '请输入字典名称',
             },
+            on: {},
           },
           {
             component: 'a-input',
             options: {
               label: '字典编号',
               prop: 'dictName',
+              defaultValue: '',
             },
             attrs: {
               placeholder: '请输入字典编号',
             },
+            on: {},
           },
         ],
         getAsyncDate: null,
@@ -77,10 +74,16 @@ export default {
           },
         ],
       },
+      queryParam: {
+        dictName: '',
+        dictCode: '',
+      },
+
       innerColumns: [
         { title: '键', dataIndex: 'itemText', key: 'itemText' },
         { title: '值', dataIndex: 'itemValue', key: 'itemValue' },
       ],
+      dataSource: [],
     }
   },
   methods: {
@@ -88,7 +91,6 @@ export default {
       this.$refs.modalForm.visible = true
     },
     handleUpdate(data) {
-      console.log(data)
       this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       //添加一个标记值
@@ -97,22 +99,36 @@ export default {
       result.status = result.status === 0 ? 0 : 1
       this.$refs.modalForm.form = result
     },
+    pagingChange({ current }) {
+      this.queryParam.pageNo = current
+      this.pagination.current = current
+      this.list()
+    },
     async handleDelete(id) {
       await this.$api.sys.diction.del([id])
       this.list()
     },
-    list() {
-      this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.diction.list(params)
-        next(result.records, result.total)
+    searchQuery() {
+      this.queryParam.pageNo = 1
+      this.pagination.current = 1
+      this.list()
+    },
+    searchReset() {
+      this.queryParam = {
+        dictName: '',
+        dictCode: '',
+        pageNo: 1,
       }
+      this.pagination.current = 1
+      this.list()
+    },
+    async list(next) {
+      let { result } = await this.$api.sys.diction.list(this.queryParam)
+      next(result.records, result.total)
     },
   },
   computed: {},
-  watch: {},
-  components: {
-    modalForm,
-  },
+  watch: {}
 }
 </script>
 <style scoped lang="less">

@@ -1,6 +1,6 @@
 import { messageArr } from '@/assets/utils/errorTip.js'
 import {notification,message} from 'ant-design-vue'
-import {baseURL} from '@/assets/config/appConfig.js'
+import {baseURL,LONGINPATH} from '@/assets/config/appConfig.js'
 
 /**
  * 要求后端拦截所有异常报错  返回json交由前端处理
@@ -65,7 +65,6 @@ function axiosFn({ $axios, store, error }) {
   response
   */
   $axios.onResponse((response) => {
-    console.log(response);
     //config data headers request
     let type = 'success'
     let url = response.config.url
@@ -88,7 +87,9 @@ function axiosFn({ $axios, store, error }) {
     if (code === 1002) {
       runNotification({ type, code, url, message })
       store.dispatch('security/loginout').then(v=>{
-        window.location.href =  `${window.location.origin}?redirect=${window.location.pathname}`
+        if(window.location.pathname!=LONGINPATH){
+          window.location.href = `${window.location.origin+LONGINPATH}?redirect=${window.location.pathname}`
+        }
       })
       return response
     }

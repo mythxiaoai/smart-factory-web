@@ -3,6 +3,11 @@ import moment from 'moment'
 import _ from 'lodash'
 import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
+//工具插件  需要挂载在原型链等都在这里挂载
+
+
+import TablePage from '@/components/common/TablePage.vue'
+Vue.component('table-page',TablePage)
 
 
 /*vue 过滤器注册 */

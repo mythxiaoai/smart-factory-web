@@ -1,6 +1,6 @@
 import { messageArr } from '@/assets/utils/errorTip.js'
-import {notification,message} from 'ant-design-vue'
-import {baseURL,LONGINPATH} from '@/assets/config/appConfig.js'
+import { notification, message } from 'ant-design-vue'
+import { baseURL, LONGINPATH } from '@/assets/config/appConfig.js'
 
 /**
  * 要求后端拦截所有异常报错  返回json交由前端处理
@@ -44,9 +44,10 @@ import {baseURL,LONGINPATH} from '@/assets/config/appConfig.js'
  * 
  */
 
-function axiosFn({ $axios, store, error }) {
+function axiosFn(content, inject) {
+  let { $axios, store, error } = content
   //baseURL
-  $axios.defaults.baseURL = baseURL;
+  $axios.defaults.baseURL = baseURL
   //超时
   //$axios.defaults.timeout = 6000
   //拦截器
@@ -55,7 +56,7 @@ function axiosFn({ $axios, store, error }) {
     if (config.data?.$msg == 'none') {
       config.headers['x-msg'] = 'none'
     }
-    if (store.getters["security/isLogin"]) {
+    if (store.getters['security/isLogin']) {
       config.headers.Authorization = 'Bearer ' + store.state.security.token
     }
     return config
@@ -71,10 +72,10 @@ function axiosFn({ $axios, store, error }) {
     let isMsg = isPopMsg(response) //成功是否弹框  根据请求方式和请求头共同判断
     let { code, message } = response.data
     //赋值默认值
-    message = message || messageArr[code];
+    message = message || messageArr[code]
     if (code >= 200 && code < 300) {
       isMsg && runMessage({ type, message })
-      response.data = response.data;
+      response.data = response.data
       return response
     }
     type = 'error'
@@ -86,9 +87,10 @@ function axiosFn({ $axios, store, error }) {
     //登陆失效
     if (code === 1002) {
       runNotification({ type, code, url, message })
-      store.dispatch('security/loginout').then(v=>{
-        if(window.location.pathname!=LONGINPATH){
-          window.location.href = `${window.location.origin+LONGINPATH}?redirect=${window.location.pathname}`
+      store.dispatch('security/loginout').then((v) => {
+        if (window.location.pathname != LONGINPATH) {
+          window.location.href = `${window.location.origin +
+            LONGINPATH}?redirect=${window.location.pathname}`
         }
       })
       return response
@@ -105,9 +107,6 @@ function axiosFn({ $axios, store, error }) {
     return errorPage({ statusCode: err.code, message: err.message }, error)
   })
 }
-
-
-
 
 //页面级错误
 function errorPage(errData, error) {
@@ -137,7 +136,5 @@ function isPopMsg(response) {
   }
   return true
 }
-
-
 
 export default axiosFn

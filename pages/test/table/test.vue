@@ -5,9 +5,9 @@
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
       </template>
         <span slot ="operation"  slot-scope = "text,record,index">
-          <!-- {{text}}-----1<br>
+          {{text}}-----1<br>
           {{record}}-----2<br>
-          {{index}}----3 -->
+          {{index}}----3
           <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
           <a-divider type="vertical" />
           <a-popconfirm

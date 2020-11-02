@@ -1,6 +1,6 @@
 <template>
   <div class="search-wrapper">
-    <slot name="search">
+    <slot name="search" v-if="formItem.length>0">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="[0, 12]">
           <!-- 大屏手机2个 ipad 3个 电脑4个 搜索框 -->
@@ -65,7 +65,7 @@ export default {
   props: {
     formItem: {
       type: Array,
-      default: [],
+      default(){return []},
     },
     getAsyncDate: {
       type: Function,
@@ -92,7 +92,13 @@ export default {
     },
   },
   mounted() {
-    
+    //表格参数处理 pagination   dataSource
+    if(this.$attrs.pagination!==undefined){
+      this.pagination = this.$attrs.pagination;
+    }
+    if(this.$attrs.dataSource!==undefined||this.$attrs["data-source"]!==undefined){
+      this.dataSource = this.$attrs.dataSource||this.$attrs["data-source"];
+    }
   },
   data: function () {
     return {
@@ -145,10 +151,11 @@ export default {
       this.list()
     },
     async list() {
+      if(!this.getAsyncDate)return;
       this.loading = true
       this.getAsyncDate(this.queryParam, (data, total) => {
         this.dataSource = data
-        this.pagination.total = total
+        total && (this.pagination.total = total);
         this.loading = false
       })
     },
@@ -171,13 +178,13 @@ export default {
       })
       //格外做的内部插槽
       //expandedRowRender  折叠slot
-      arr.push("expandedRowRender")
+      this.$scopedSlots.expandedRowRender && arr.push("expandedRowRender")
       return arr
     },
   },
   watch: {
     getAsyncDate: {
-      handler: function(){
+      handler: function(v){
         this.searchReset();
         this.$nextTick(()=>{
           this.changeSlotParams();

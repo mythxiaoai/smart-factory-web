@@ -5,14 +5,9 @@
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
       </template>
 
-      <table-page
-        slot="expandedRowRender"
-        slot-scope="text"
-        :columns="innerColumns"
-        :data-source="text.dictItemList"
-        :pagination="false"
-      >
-      </table-page>
+      <template #status = "val">
+        {{val==null?"":val?"启用":"停用"}}
+      </template>
 
       <span slot="operation" slot-scope="text">
         <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
@@ -24,6 +19,17 @@
           <a> <a-icon type="delete" />删除 </a>
         </a-popconfirm>
       </span>
+
+      <a-table
+        slot="expandedRowRender"
+        slot-scope="text"
+        :columns="innerColumns"
+        :dataSource="text.dictItemList"
+        :pagination="false"
+      >
+      </a-table>
+
+      
     </table-page>
     <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
     <modal-form ref="modalForm" @refresh="list"></modal-form>
@@ -68,7 +74,12 @@ export default {
         columns: [
           { title: '字典名称', dataIndex: 'dictName', key: 'dictName' },
           { title: '字典编号', dataIndex: 'dictCode', key: 'dictCode' },
-          { title: '是否启用', dataIndex: 'status', key: 'status' },
+          {
+            title: '是否启用',
+            dataIndex: 'status',
+            key: 'status',
+            scopedSlots: { customRender: 'status' },
+          },
           { title: '备注', dataIndex: 'description', key: 'description' },
           {
             title: '操作',

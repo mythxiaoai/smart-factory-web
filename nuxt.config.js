@@ -33,6 +33,7 @@ export default {
     '@/plugins/vue-ls.js',
     '@/plugins/util.js',
     '@/plugins/axios.js',
+    '@/plugins/http.js',
     
     //项目相关
     '@/plugins/app.js',
@@ -56,6 +57,7 @@ export default {
   proxy: {
     '/rjgf': {
       target: 'http://192.168.110.241:9122/',
+      //target: 'http://113.108.148.245:9594/',
       //target: 'http://192.168.110.240:9200/mock/122/',
       ws: false,
       changeOrigin: true,

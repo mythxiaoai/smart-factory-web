@@ -10,138 +10,163 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="formModel" :model="form" :rules="rules">
-        <a-form-model-item
-          label="字典名称"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-          hasFeedback
-          prop="dictName"
-        >
-          <a-input placeholder="请输入字典名称" v-model="form.dictName" />
+        <a-form-model-item label="" hasFeedback style="text-align: center">
+          <a-radio-group v-model="form.menuType">
+            <a-radio-button :value="0"> 一级菜单 </a-radio-button>
+            <a-radio-button :value="1"> 子菜单 </a-radio-button>
+            <a-radio-button :value="2"> 按钮权限 </a-radio-button>
+          </a-radio-group>
         </a-form-model-item>
 
-        <a-form-model-item
-          label="字典编号"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-          hasFeedback
-          prop="dictCode"
-        >
-          <a-input placeholder="请输入字典编号" v-model="form.dictCode" />
-        </a-form-model-item>
-
-        <a-form-model-item
-          label="是否启用"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-          hasFeedback
-          prop="status"
-        >
-          <a-switch
-            @change="form.status = form.statusShow ? 1 : 0"
-            v-model="form.statusShow"
-            checked-children="启用"
-            un-checked-children="禁用"
-          />
-        </a-form-model-item>
-        <a-form-model-item
-          label="备注"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-          hasFeedback
-          prop="description"
-        >
-          <a-input placeholder="请输入关键词" v-model="form.description" />
-        </a-form-model-item>
-        <a-divider class="fz12">子项</a-divider>
-
-        <a-row type="flex" class="m-b" justify="center" :gutter="15">
-          <a-col
-            v-for="(item, index) in multiterm.label"
-            :key="index"
-            :flex="1"
-            class="text-c"
-            >{{ item }}</a-col
+        <div v-show="form.menuType == 0 || form.menuType == 1">
+          <a-form-model-item
+            label="上级菜单"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="parentId"
+            v-show="form.menuType === 1"
           >
-          <a-col flex="0 1 100px" class="text-c">操作</a-col>
-        </a-row>
-        <a-row
-          type="flex"
-          justify="center"
-          :gutter="15"
-          v-for="(item, index) in multitermData"
-          :key="index"
-        >
-          <a-col :flex="1" v-for="key in Object.keys(item)" :key="key">
-            <a-form-model-item
-              hasFeedback
-              :prop="`dictItemList[${index}][${key}]`"
+            <a-tree-select
+              v-model="form.parentId"
+              :tree-data="menuList"
+              placeholder="请选择上级菜单"
+              :replaceFields="{ title: 'name', value: 'id', key: 'id' }"
             >
-              <a-input
-                v-if="key === 'sortOrder'"
-                v-model.number="form.dictItemList[index][key]"
-              />
-              <a-input v-else v-model="form.dictItemList[index][key]" />
-            </a-form-model-item>
-          </a-col>
+            </a-tree-select>
+          </a-form-model-item>
 
-          <a-col flex="0 1 100px" class="text-c">
-            <a-form-model-item hasFeedback>
-              <a-button-group>
-                <a-popconfirm
-                  v-if="hasValue(index)"
-                  title="确定删除吗?"
-                  @confirm="minus(index)"
-                >
-                  <a-button
-                    icon="minus"
-                    v-show="multitermData.length > 1"
-                  ></a-button>
-                </a-popconfirm>
-                <a-button
-                  v-else
-                  icon="minus"
-                  v-show="multitermData.length > 1"
-                  @click="minus(index)"
-                ></a-button>
-                <a-button icon="plus" @click="plus(index)"></a-button>
-              </a-button-group>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-        <!-- <a-row type="flex" class="m-b" justify="center" :gutter="15">
-          <a-col :flex="1" class="text-c">键</a-col>
-          <a-col :flex="1" class="text-c">值</a-col>
-          <a-col flex="0 1 100px" class="text-c">操作</a-col>
-        </a-row>
-        <a-row type="flex" class="m-b" justify="center" :gutter="15">
-          <a-col :flex="1">
-            <a-input placeholder="请输入字典名称" v-decorator="['name', {}]" />
-          </a-col>
-          <a-col :flex="1">
-            <a-input placeholder="请输入字典名称" v-decorator="['name', {}]" />
-          </a-col>
-          <a-col flex="0 1 100px" class="text-c">
-            <a-button-group>
-              <a-button icon="minus"></a-button>
-              <a-button icon="plus"></a-button>
-            </a-button-group>
-          </a-col>
-        </a-row>
-        <a-row type="flex" class="m-b" justify="center" :gutter="15">
-          <a-col :flex="1">
-            <a-input placeholder="请输入字典名称" v-decorator="['name', {}]" />
-          </a-col>
-          <a-col :flex="1">
-            <a-input placeholder="请输入字典名称" v-decorator="['name', {}]" />
-          </a-col>
-          <a-col flex="0 1 100px" class="text-c">
-            <a-button-group>
-              <a-button icon="minus"></a-button>
-              <a-button icon="plus"></a-button>
-            </a-button-group>
-          </a-col>
-        </a-row>-->
+          <a-form-model-item
+            label="菜单名称"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="name"
+          >
+            <a-input placeholder="请输入菜单名称" v-model="form.name" />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="菜单路径"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="url"
+          >
+            <a-input placeholder="请输入菜单路径" v-model="form.url" />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="菜单图标"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="icon"
+            v-show="form.menuType === 0"
+          >
+            <a-input placeholder="请输入菜单图标" v-model="form.icon" />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="排序"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="sortNo"
+          >
+            <a-input
+              placeholder="请输入菜单排序"
+              v-model.number="form.sortNo"
+            />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="是否是主菜单"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="routeFlag"
+          >
+            <a-switch
+              @change="form.routeFlag = form.routeFlagShow ? 1 : 0"
+              v-model="form.routeFlagShow"
+              checked-children="是"
+              un-checked-children="否"
+            />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="是否启用"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="status"
+          >
+            <a-switch
+              @change="form.status = form.statusShow ? 1 : 0"
+              v-model="form.statusShow"
+              checked-children="是"
+              un-checked-children="否"
+            />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="打开方式"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="internalOrExternal"
+          >
+            <a-switch
+              @change="
+                form.internalOrExternal = form.internalOrExternalShow ? 0 : 1
+              "
+              v-model="form.internalOrExternalShow"
+              checked-children="内部"
+              un-checked-children="外部"
+            />
+          </a-form-model-item>
+        </div>
+        <div v-show="form.menuType == 2">
+          <a-form-model-item
+            label="上级菜单"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="parentId"
+          >
+            <a-tree-select
+              v-model="form.parentId"
+              :tree-data="menuList"
+              placeholder="请选择上级菜单"
+              :replaceFields="{ title: 'name', value: 'id', key: 'id' }"
+            >
+            </a-tree-select>
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="功能名称"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="name"
+          >
+            <a-input placeholder="请输入功能名称" v-model="form.name" />
+          </a-form-model-item>
+
+          <a-form-model-item
+            label="授权标识"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+            hasFeedback
+            prop="perms"
+          >
+            <a-input
+              placeholder="多个用逗号分隔, 如: user:list,user:create"
+              v-model="form.perms"
+            />
+          </a-form-model-item>
+        </div>
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -149,59 +174,43 @@
 
 <script>
 let Oform = {
-  dictName: '',
-  dictCode: '',
+  menuType: 0,
+  parentId: null,
+  name: '',
+  url: '',
+  icon: null,
+  sortNo: 1,
+  routeFlag: 1,
+  routeFlagShow: true,
+  //是否内部打开 0 内部  1外部
+  internalOrExternal: 0,
+  internalOrExternalShow: true,
   status: 1,
-  delFlag: 0,
   statusShow: true,
-  description: '',
-  dictItemList: [{ itemText: '', itemValue: '', sortOrder: 1 }],
+  perms: '',
+  ruleFlag: 0,
+  leafFlag: null,
+  description: null,
 }
 export default {
   name: 'modalForm',
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$api.sys.diction.verify1({
-        dictId: this.form.id,
-        dictCode: this.form.dictCode,
+      if(!this.form.parentId){
+        callback(new Error('请先选择上级菜单~'));
+        return;
+      }
+      
+      //parentPermissionId perName permissionId
+      let res = await this.$api.sys.menu.checkSubName({
+        parentPermissionId: this.form.parentId,
+        perName: value,
+        permissionId: this.form.id,
       })
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
-    let unique2 = async (rule, value, callback) => {
-      return new Promise((resolve, reject) =>{
-        //本地输入校验
-        let i = 0
-        this.form.dictItemList.forEach((v) => {
-          i = 0
-          this.form.dictItemList.forEach((k) => {
-            if (v.itemValue == k.itemValue) {
-              i++
-              if (i == 2) {
-                reject("需要保证值唯一")
-              }
-            }
-          })
-        })
-        resolve()
-      })
-    }
-
-    let unique3 = async (rule, value, callback) => {
-      //异步校验
-      let res = await this.$api.sys.diction.verify2({
-        dictId: this.form.id || '',
-        dictItemId: rule.id,
-        dictItemCode: value,
-      })
-      if(!res.result){
-          return Promise.resolve();
-      }else{
-          return Promise.reject("需要保证值唯一");
-      }
-    }
     return {
-      unique2,
-      unique3,
+      unique1,
       title: '操作',
       visible: false,
       model: {},
@@ -214,30 +223,29 @@ export default {
         sm: { span: 16 },
       },
       confirmLoading: false,
+      selectList:{
+        menuList:[]
+      },
       form: {
-        dictName: '',
-        dictCode: '',
+        menuType: 0,
+        parentId: null,
+        name: '',
+        url: '',
+        icon: null,
+        sortNo: 1,
+        perms: '',
+        routeFlag: 1,
+        routeFlagShow: true,
+        //是否内部打开 0 内部  1外部
+        internalOrExternal: 0,
+        internalOrExternalShow: true,
         status: 1,
-        delFlag: 0,
         statusShow: true,
-        description: '',
-        dictItemList: [{ itemText: '', itemValue: '', sortOrder: 1 }],
+        ruleFlag: 0,
+        leafFlag: null,
+        description: null,
       },
-      rules: {
-        dictName: [{ required: true, message: '不能为空~' }],
-        dictCode: [
-          { required: true, message: '不能为空~', trigger: 'blur' },
-          { validator: unique1, trigger: 'blur' },
-        ],
-        nonEmpty: [{ required: true, message: '不能为空~', trigger: 'blur' }],
-        verify: [{ required: true, message: '不能为空~', trigger: 'blur' }],
-        dictItemList: [
-          {
-            itemText: [{ required: true, message: '不能为空~' }],
-            itemValue: [{ required: true, message: '不能为空~' }],
-          },
-        ],
-      },
+
       multiterm: {
         label: ['键', '值', '排序'],
         visible: [false, false],
@@ -247,40 +255,61 @@ export default {
   },
   created() {},
   computed: {
-    multitermData() {
-      //rules的同步  id传入
-      let len = this.form.dictItemList.length
-      let arr = []
-      for (let i = 0; i < len; i++) {
-        arr.push({
-          itemText: [{ required: true, message: '不能为空~', trigger: 'blur' }],
-          itemValue: [
-            { required: true, message: '不能为空~', trigger: 'blur' },
-            {
-              asyncValidator: this.unique2,
-              trigger: 'blur',
-            },
-            {
-              asyncValidator: this.unique3,
-              trigger: 'blur',
-              id: this.form.dictItemList[i].id || '',
-            },
-          ],
-        })
+    rules() {
+      //一级菜单
+      let result = {
+        name: [{ required: true, message: '不能为空~', trigger: 'blur' }]
       }
-      this.rules.dictItemList = arr
-
-      return this.form.dictItemList.map((v) => {
-        let json = {}
-        this.multiterm.showKey.forEach((key) => {
-          json[key] = v[key]
+      //子菜单
+      if (this.form.menuType == 1) {
+        result.parentId = [
+          { required: true, message: '不能为空~', trigger: 'change' },
+        ]
+      }
+      //按钮权限
+      if (this.form.menuType == 2) {
+        result = {
+          name: [
+            { required: true, message: '不能为空~', trigger: 'blur' },
+            { validator: this.unique1, trigger: 'blur' },
+          ],
+          parentId: [{ required: true, message: '不能为空~', trigger: 'change' }],
+        }
+      }
+      return result
+    },
+    menuList() {
+      //过滤出按钮权限
+      function filterNode(data) {
+        data = data.filter((val) => {
+          if (val.children?.length > 0) {
+            val.children = filterNode(val.children)
+          } else if (val.children?.length == 0) {
+            delete val.children
+          }
+          if (val.menuType == 0 || val.menuType == 1) return true
         })
-        return json
-      })
+        return data
+      }
+
+      //过滤出不是叶子节点
+      return filterNode(this.selectList.menuList)
     },
   },
   methods: {
-    disableSubmit() {},
+    initForm(data,parmas) {
+      //回显赋值
+      if (this.form.id) {
+        this.form.routeFlagShow = this.form.routeFlag ? true : false
+        this.form.statusShow = this.form.status ? true : false
+        this.form.internalOrExternalShow = this.form.internalOrExternal
+          ? false
+          : true
+      }
+      //上级菜单的下拉
+      this.selectList = data;
+      parmas && Object.assign(this.form,parmas);
+    },
     add() {
       this.edit({})
     },
@@ -296,75 +325,55 @@ export default {
       //this.$utils.fromReset(this.form);
     },
     handleOk() {
+      /*
+        menuType: 0,
+        parentId: null,
+        name: '',
+        url: '',
+        icon: null,
+        sortNo: 1,
+        perms:"",
+        routeFlag: 1,
+        routeFlagShow: true,
+        //是否内部打开 0 内部  1外部
+        internalOrExternal: 0,
+        internalOrExternalShow: true,
+        status: 1,
+        statusShow: true,
+        ruleFlag: 0,
+        leafFlag: null,
+        description: null,
+       */
       // 触发表单验证
       this.$refs.formModel.validate(async (valid) => {
         if (!valid) return
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.sys.diction.edit
-          : this.$api.sys.diction.add
-        this.form.$msg = 'none' //不弹通知
-        let res = await http(this.form)
-        //做新增  先添加父id  在搞事
-        if (res.result) this.form.id = res.result.id
-        //字典项
-        let promiseArr = []
-        this.form.dictItemList.map((v) => {
-          const http = v.id
-            ? this.$api.sys.diction.editItem
-            : this.$api.sys.diction.addItem
-          //编辑和新增都加上字典的id
-          v.dictId = this.form.id
-          promiseArr.push(http(v))
-        })
-        res = await Promise.all(promiseArr)
-        console.log(res)
+          ? this.$api.sys.menu.edit
+          : this.$api.sys.menu.add
+        await http(this.form)
+        //参数组装
+        //菜单
+        // let parmas = JSON.parse(JSON.stringify(this.form))
+        // if(this.form.menuType == 0){
+        //   let {menuType,name,url,icon,sortNo,routeFlag,internalOrExternal,status} = parmas;
+        //   parmas = {menuType,name,url,icon,sortNo,routeFlag,internalOrExternal,status}
+        // }else if(this.form.menuType == 1){
+        //   let {menuType,name,url,parentId,sortNo,routeFlag,internalOrExternal,status} = parmas;
+        //   parmas = {menuType,name,url,parentId,sortNo,routeFlag,internalOrExternal,status};
+        // }else{
+        //   let {menuType,parentId,name,perms} = parmas;
+        //   parmas = {menuType,parentId,name,perms}
+        // }
+        //this.form.id && (parms.id = this.form.id);
         this.confirmLoading = false
-
         this.close()
         this.$emit('refresh')
       })
     },
     handleCancel() {
       this.close()
-    },
-    handleVisibleChange(index) {
-      let value = this.form.getFieldValue(`dictItemList`)[index]
-      value = Object.values(value).join('')
-      if (value) {
-        this.showPop(index)
-      } else {
-        this.hidePop(index)
-        this.minus(index)
-      }
-    },
-    hidePop(index) {
-      this.multiterm.visible.splice(index, 1, false)
-    },
-    showPop(index) {
-      this.multiterm.visible.splice(index, 1, true)
-    },
-    async minus(index) {
-      console.log(this.form.dictItemList[index].id)
-      if (this.form.dictItemList[index].id) {
-        const res = await this.$api.sys.diction.delItem([
-          this.form.dictItemList[index].id,
-        ])
-      }
-      this.form.dictItemList.splice(index, 1)
-      this.multiterm.visible.splice(index, 1)
-    },
-    plus(index) {
-      //split长度为0会插入当前值的前面
-      this.form.dictItemList.splice(index + 1, 0, {
-        itemText: '',
-        itemValue: '',
-      })
-      this.multiterm.visible.splice(index + 1, 0, false)
-    },
-    hasValue: function (index) {
-      return this.form.dictItemList[index].id
     },
   },
 }

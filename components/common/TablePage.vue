@@ -112,6 +112,7 @@ export default {
     changeSlotParams() {
       this.renderSlots.forEach((v) => {
         let fn = this.$scopedSlots[v]
+        if(!fn) throw new Error(v+"插槽slot已定义，模板上未写写插槽~");
         this.$scopedSlots[v] = function (data) {
           let vals = Object.values(data)
           return fn(...vals)

@@ -10,6 +10,6 @@ fi
 
 apiUrl="proxy_pass  http://$API_PATH/rjgf/api;"
 
-sed -i '22c '"$apiUrl"'' /etc/nginx/conf.d/default.conf
+sed -i '29c '"$apiUrl"'' /etc/nginx/conf.d/default.conf
 
 nginx -g "daemon off;"

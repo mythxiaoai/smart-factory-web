@@ -135,7 +135,6 @@
         >
           <a-textarea placeholder="请输入备注" v-model="form.remark" />
         </a-form-model-item>
-        {{form}}
       </a-form-model>
     </a-spin>
   </a-modal>

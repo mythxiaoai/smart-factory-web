@@ -380,19 +380,5 @@ export default {
 </script>
 
 <style scoped lang="less">
-.text-r {
-  text-align: right;
-}
-.text-c {
-  text-align: center;
-}
-.weight700 {
-  font-weight: 700;
-}
-.fz12 {
-  font-size: 12px;
-}
-.m-b {
-  margin-bottom: 15px;
-}
+
 </style>

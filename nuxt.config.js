@@ -14,7 +14,9 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: './assets/imgs/favicon.ico' }]
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: './assets/imgs/favicon.ico' }
+    ]
   },
   /*
    ** Customize the progress-bar color
@@ -23,7 +25,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['ant-design-vue/dist/antd.css',"./assets/less/index.less"],
+  css: ['ant-design-vue/dist/antd.css', './assets/less/index.less'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -34,10 +36,9 @@ export default {
     '@/plugins/util.js',
     '@/plugins/axios.js',
     '@/plugins/http.js',
-    
-    //项目相关
-    '@/plugins/app.js',
 
+    //项目相关
+    '@/plugins/app.js'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -49,13 +50,13 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/style-resources',
-    '~/modules/api/api-inject.js',
+    '~/modules/api/api-inject.js'
   ],
   axios: {
     proxy: true
   },
   proxy: {
-    '/rjgf': {
+    '/rjgf/api/': {
       target: 'http://192.168.110.241:9122/',
       //target: 'http://113.108.148.245:9594/',
       //target: 'http://192.168.110.240:9200/mock/122/',
@@ -77,10 +78,10 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    hardSource:true,
-    friendlyErrors:false,
-    extend(config, { isClient, loaders}) {
-      loaders.less.javascriptEnabled =true;
+    hardSource: true,
+    friendlyErrors: false,
+    extend(config, { isClient, loaders }) {
+      loaders.less.javascriptEnabled = true
       if (isClient) {
         // console.log(config.module.rules[2]);
         //     config.module.rules[2] = {
@@ -102,6 +103,7 @@ export default {
     }
   },
   server: {
+    host: '0.0.0.0',
     timing: {
       total: true
     }

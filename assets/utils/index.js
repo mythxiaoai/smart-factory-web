@@ -21,4 +21,30 @@ function stringify(obj) {
   function isFunctionStr(str) {
     return /\((.*)\)[.*]*\{(.*)\}$/gim.test(str)
   }
+
   
+//简单数据变成父子结构数据  忽略大小写
+
+function convert(list) {
+  const res = []
+  const map = list.reduce((res, v) => (res[v.id] = v, res), {});
+  for (const item of list) {
+      if (item.parentId === null) {
+          res.push(item)
+          continue
+      }
+      if (item.parentId in map) {
+        //在map中找出父
+          const parent = map[item.parentId]
+          console.log(parent);
+          //添加子
+          parent.children = parent.children || []
+          parent.children.push(item)
+      }
+  }
+  return res
+}
+
+module.exports={
+  convert
+}

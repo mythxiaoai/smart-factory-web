@@ -87,12 +87,11 @@ function axiosFn(content, inject) {
     //登陆失效
     if (code === 1002) {
       runNotification({ type, code, url, message })
-      store.dispatch('security/loginout').then((v) => {
-        if (window.location.pathname != LONGINPATH) {
-          window.location.href = `${window.location.origin +
-            LONGINPATH}?redirect=${window.location.pathname}`
-        }
-      })
+      store.commit('security/celar');
+      if (window.location.pathname != LONGINPATH) {
+        window.location.href = `${window.location.origin +
+          LONGINPATH}?redirect=${window.location.pathname}`
+      }
       return response
     }
     //其他异常

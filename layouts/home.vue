@@ -29,6 +29,10 @@
           <a-icon type="upload" />
           <span>菜单管理</span>
         </a-menu-item>
+        <a-menu-item key="/sys/application/list">
+          <a-icon type="upload" />
+          <span>应用管理</span>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
 

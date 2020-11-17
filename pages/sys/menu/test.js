@@ -55,7 +55,7 @@ function simpleToPS(data,optObj){
 
    //console.log(simpleToPS([{id:1,pid:"",}]));
 //外层循环数组，每层对item做加工  map作为取值返回   整体思想先找到父在赋值子
-   function convert(list) {
+function convert(list) {
     const res = []
     const map = list.reduce((res, v) => (res[v.id] = v, res), {});
     console.log(map);

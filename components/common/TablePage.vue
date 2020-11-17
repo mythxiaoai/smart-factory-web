@@ -1,39 +1,71 @@
+<!--  记录bug   修改运行不需要运行参数 -->
 <template>
   <div class="search-wrapper">
-    <slot name="search" v-if="formItem.length>0">
-      <a-form layout="inline" @keyup.enter.native="searchQuery">
-        <a-row :gutter="[0, 12]">
-          <!-- 大屏手机2个 ipad 3个 电脑4个 搜索框 -->
-          <!-- xs sm md lg xl xxl -->
-          <a-col :sm="12" :md="8" :xxl="6" v-for="(item, index) in formItem" :key="index">
-            <a-form-item :label="item.options.label">
-              <!-- el-input -->
-              <template v-if="item.component == 'a-input'">
-                <component
-                  :is="item.component"
-                  v-model="queryParam[item.options.prop]"
-                  v-bind="item.attrs"
-                  v-on="item.on"
-                ></component>
-              </template>
-            </a-form-item>
-          </a-col>
+    <slot name="search">
+      <a-form
+        layout="inline"
+        @keyup.enter.native="searchQuery"
+        v-if="formItem.length > 0"
+      >
+        <!-- 大屏手机2个 ipad 3个 电脑4个 搜索框 -->
+        <!-- xs sm md lg xl xxl -->
+        <a-form-item
+          v-for="(item, index) in formItem"
+          :label="item.options.label"
+          :key="index"
+        >
+          <!-- el-input -->
+          <template v-if="item.component == 'a-input'">
+            <component
+              :is="item.component"
+              v-model="queryParam[item.options.prop]"
+              v-bind="item.attrs"
+              v-on="item.on"
+            ></component>
+          </template>
+          <!-- el-input -->
+          <template v-if="item.component == 'a-select'">
+            <component
+              :is="item.component"
+              v-model="queryParam[item.options.prop]"
+              v-bind="item.attrs"
+              v-on="item.on"
+            >
+              <component
+                :is="item.children.component"
+                v-for="val of item.children.options.data"
+                :value="val[item.children.options.valueKey]"
+                :key="val[item.children.options.valueKey]"
+                v-bind="item.children.attrs"
+                v-on="item.children.on"
+                >{{ val[item.children.options.titleKey] }}</component
+              >
+            </component>
+          </template>
+        </a-form-item>
 
-          <a-col :sm="12" :md="8" :xxl="6">
-            <a-form-item>
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">
-                重置
-              </a-button>
-            </a-form-item>
-          </a-col>
-        </a-row>
+        <a-form-item>
+          <a-button type="primary" @click="searchQuery" icon="search"
+            >查询</a-button
+          >
+          <a-button
+            type="primary"
+            @click="searchReset"
+            icon="reload"
+            style="margin-left: 8px"
+          >
+            重置
+          </a-button>
+        </a-form-item>
       </a-form>
     </slot>
 
     <div class="table-operator" style="border-top: 5px">
       <slot name="table-operator"></slot>
     </div>
+
+    <!--表格页面插槽-->
+    <slot name="page-opts"></slot>
     <!-- <slot name="operation" :data="{id:1}"></slot> -->
     <a-table
       ref="table"
@@ -46,7 +78,7 @@
       v-on="$listeners"
     >
       <!--这里做插槽转发  把外层插槽在内部slot接收，外层包裹传递过来的在传入a-table插件  因为这里用了这种  所以不支持a-table-column-group组件了-->
-      <template v-for="item in renderSlots" #[item]="text,record,index">
+      <template v-for="item in renderSlots" #[item]="text, record, index">
         <slot :name="item" v-bind="{ text, record, index }"></slot>
       </template>
       <slot></slot>
@@ -61,11 +93,18 @@ const pagination = {
   total: 50,
 }
 
+let query = {
+  pageNo: 1,
+  pageSize: 10,
+}
+
 export default {
   props: {
     formItem: {
       type: Array,
-      default(){return []},
+      default() {
+        return []
+      },
     },
     getAsyncDate: {
       type: Function,
@@ -74,10 +113,7 @@ export default {
     setHTTParams: {
       type: Object,
       default() {
-        return {
-          pageNo: 1,
-          pageSize: 10,
-        }
+        return {}
       },
     },
     //设置传递http的分页参数的key是什么
@@ -91,28 +127,29 @@ export default {
       },
     },
   },
-  mounted() {
-    //表格参数处理 pagination   dataSource
-    if(this.$attrs.pagination!==undefined){
-      this.pagination = this.$attrs.pagination;
-    }
-    if(this.$attrs.dataSource!==undefined||this.$attrs["data-source"]!==undefined){
-      this.dataSource = this.$attrs.dataSource||this.$attrs["data-source"];
+  created() {
+    if (
+      this.$attrs.dataSource !== undefined ||
+      this.$attrs['data-source'] !== undefined
+    ) {
+      this.dataSource = this.$attrs.dataSource || this.$attrs['data-source']
     }
   },
   data: function () {
     return {
+      firstInto:true,
       queryParam: null,
-      pagination: null,
+      pagination,
       loading: false,
-      dataSource: null,
+      dataSource: [],
     }
   },
   methods: {
     changeSlotParams() {
+      //暂时没有应用这个方法
       this.renderSlots.forEach((v) => {
         let fn = this.$scopedSlots[v]
-        if(!fn) throw new Error(v+"插槽slot已定义，模板上未写写插槽~");
+        if (!fn) throw new Error(v + '插槽slot已定义，模板上未写写插槽~')
         this.$scopedSlots[v] = function (data) {
           let vals = Object.values(data)
           return fn(...vals)
@@ -120,18 +157,33 @@ export default {
       })
     },
     initSearch() {
-      //判断
-      if (!isExistkeys(this.setHTTParams, this.setHTTPPageKey)) {
-        throw new Error(
-          '参数setHTTParams中，必须含有setHTTPPageKey中的分页参数'
-        )
-      }
-      let query = JSON.parse(JSON.stringify(this.setHTTParams))
+      console.log("init");
+      let query = JSON.parse(JSON.stringify(this.setHTTParams));
+      //查询参数
       this.formItem.forEach((v) => {
         let key = v?.options?.prop
         if (key) query[key] = v.options?.defaultValue ?? ''
       })
       this.queryParam = query
+
+      this.initPagination()
+    },
+    initPagination() {
+      if (this.$attrs.pagination === false) {
+        this.pagination = false
+        return
+      }
+      let pageNo = this.setHTTParams[this.setHTTPPageKey.currentPage]
+      let pageSize = this.setHTTParams[this.setHTTPPageKey.pageSize]
+
+      //重置分页参数
+      this.pagination = JSON.parse(JSON.stringify(pagination))
+      //查询
+      this.queryParam[this.setHTTPPageKey.currentPage] = pageNo ?? query.pageNo
+      this.queryParam[this.setHTTPPageKey.pageSize] = pageSize ?? query.pageSize
+      //分页
+      this.pagination.current = pageNo ?? query.pageNo
+      this.pagination.pageSize = pageSize ?? query.pageSize
     },
     pagingChange({ current }) {
       this.queryParam[this.setHTTPPageKey.currentPage] = current
@@ -144,25 +196,28 @@ export default {
       this.list()
     },
     searchReset() {
-      //重置分页参数
-      this.pagination = JSON.parse(JSON.stringify(pagination))
-      //重置查询条件
+      this.initPagination()
+      //重置参数
       this.initSearch()
       //列表
       this.list()
     },
     async list() {
-      if(!this.getAsyncDate)return;
+      if (!this.getAsyncDate) {
+        this.dataSource = []
+        return
+      }
       this.loading = true
       this.getAsyncDate(this.queryParam, (data, total) => {
         this.dataSource = data
-        total && (this.pagination.total = total);
+        total && (this.pagination.total = total)
         this.loading = false
       })
     },
   },
   computed: {
     renderSlots() {
+      //组装动态插槽
       let arr = []
       //  slots: { title: 'customTitle' },
       //scopedSlots: { customRender: 'name'  filterDropdown: 'filterDropdown',filterIcon: 'filterIcon',},
@@ -172,36 +227,51 @@ export default {
           v.slots?.title && arr.push(v.slots?.title)
         }
         if (~keys.indexOf('scopedSlots')) {
-          v.scopedSlots?.customRender && typeof v.scopedSlots.customRender == 'string' && arr.push(v.scopedSlots.customRender)
-          v.scopedSlots?.filterDropdown && typeof v.scopedSlots.filterDropdown == 'string' && arr.push(v.scopedSlots.filterDropdown)
-          v.scopedSlots?.filterIcon && typeof v.scopedSlots.filterIcon == 'string' && arr.push(v.scopedSlots.filterIcon)
+          v.scopedSlots?.customRender &&
+            typeof v.scopedSlots.customRender == 'string' &&
+            arr.push(v.scopedSlots.customRender)
+          v.scopedSlots?.filterDropdown &&
+            typeof v.scopedSlots.filterDropdown == 'string' &&
+            arr.push(v.scopedSlots.filterDropdown)
+          v.scopedSlots?.filterIcon &&
+            typeof v.scopedSlots.filterIcon == 'string' &&
+            arr.push(v.scopedSlots.filterIcon)
         }
       })
       //格外做的内部插槽
       //expandedRowRender  折叠slot
-      this.$scopedSlots.expandedRowRender && arr.push("expandedRowRender")
+      this.$scopedSlots.expandedRowRender && arr.push('expandedRowRender')
       return arr
     },
   },
   watch: {
+    formItem: {
+      handler: 'initSearch',
+      deep: true,
+    },
+    setHTTParams: {
+      handler: 'initSearch',
+      deep: true,
+    },
+    setHTTPPageKey: {
+      handler: 'initSearch',
+      deep: true,
+    },
     getAsyncDate: {
-      handler: function(v){
-        this.searchReset();
-        this.$nextTick(()=>{
-          this.changeSlotParams();
-        })
+      handler(){
+          if(this.firstInto){
+            this.initSearch();
+            this.list();
+            this.firstInto = false;
+          }else{
+            this.list();
+          }
       },
       immediate: true,
     },
   },
 }
 
-//在setHTTParams里找不到默认的分页参数 就调整
-function isExistkeys(v1, v2) {
-  let keys1 = Object.keys(v1).join()
-  let keys2Arr = Object.values(v2)
-  return keys2Arr.map((v) => ~keys1.indexOf(v)).every((v) => v)
-}
 </script>
 <style scoped lang="less">
 </style>

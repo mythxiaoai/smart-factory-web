@@ -9,7 +9,7 @@
         {{val==null?"":val?"启用":"停用"}}
       </template>
 
-      <span slot="operation" slot-scope="text">
+      <span slot="operation" slot-scope="{text}">
         <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
         <a-divider type="vertical" />
         <a-popconfirm
@@ -22,7 +22,7 @@
 
       <a-table
         slot="expandedRowRender"
-        slot-scope="text"
+        slot-scope="{text}"
         :columns="innerColumns"
         :dataSource="text.dictItemList"
         :pagination="false"
@@ -63,7 +63,7 @@ export default {
             component: 'a-input',
             options: {
               label: '字典编号',
-              prop: 'dictName',
+              prop: 'dictCode',
             },
             attrs: {
               placeholder: '请输入字典编号',
@@ -128,34 +128,4 @@ export default {
 </script>
 <style scoped lang="less">
 </style>
-<style lang="less">
-.ant-form label {
-  font-size: 12px;
-}
 
-.search-wrapper {
-  form {
-    margin-bottom: 15px;
-    .ant-row {
-      .ant-form-item {
-        display: flex;
-        flex-wrap: nowrap;
-        .ant-form-item-control-wrapper {
-          flex: 1 1 auto;
-          .ant-form-item-control {
-            .ant-form-item-children {
-              white-space: nowrap;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-.table-operator {
-  margin-bottom: 8px;
-  .ant-btn {
-    margin: 0 8px 8px 0;
-  }
-}
-</style>

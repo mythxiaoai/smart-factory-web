@@ -49,7 +49,6 @@ var mixin = {
 export default {
   mixin:[mixin],
   created(){
-    console.log(this);
   },
   mounted() {
     this.list()

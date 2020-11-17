@@ -118,7 +118,6 @@ export default {
           values.checkKey = this.checkKey;
           this.$api.login.login(values).then((res) => {
             if (res.success) {
-              console.log(HOMEPATH);
               this.$store.dispatch('security/saveToken', res.result.token);
               const redirect = this.$route.query.redirect || HOMEPATH
               this.$router.push(redirect)

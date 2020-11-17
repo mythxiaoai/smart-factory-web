@@ -51,7 +51,7 @@
           hasFeedback
           prop="description"
         >
-          <a-input placeholder="请输入关键词" v-model="form.description" />
+          <a-textarea placeholder="请输入关键词" v-model="form.description" />
         </a-form-model-item>
         <a-divider class="fz12">子项</a-divider>
 
@@ -323,7 +323,9 @@ export default {
         this.confirmLoading = false
 
         this.close()
-        this.$emit('refresh')
+        this.$emit('refresh');
+        //刷新全局字典表
+        this.$store.dispatch('security/getAlldict');
       })
     },
     handleCancel() {

@@ -18,15 +18,7 @@ export default {
         }
       },
       actions:{
-        //登陆
-        login({ commit, getters }, u) {
-          console.log('actions', this)
-          commit('init', u)
-        },
-        //退出
-        loginout({ commit, dispatch, getters }, u) {
-          commit('init', null)
-        }
+
       }
 }
 

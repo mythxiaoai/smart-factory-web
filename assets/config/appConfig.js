@@ -25,7 +25,7 @@ export default {
   multiTab: false,//Tab模式
 }
 
-export const baseURL = window.location.origin+"/rjgf"
+export const baseURL = window.location.origin+"/rjgf/api/"
 
 //登陆页面配置
 export const LONGINPATH = '/login';

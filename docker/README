@@ -1,0 +1,33 @@
+项目docker 打包
+主入口文件 start_build.sh
+调用指令 需要加入两个参数 参数1 镜像名称 参数2 dockerfile 名称
+example:
+./start_build.sh pt-client-smart-factory SmartFactoryDockerfile
+
+镜像名字 取 docker-compose.yml 里面的镜像名字
+dockerfile 名称 取 需要执行的dockerfile 名称
+
+===================================================================
+编写 docker-compose.yml 规则
+1 service 下面的key 值 一定要与 images 的value 值一致
+如下
+services:
+  pt-client-smart-factory:
+    image: pt-client-smart-factory
+pt-client-smart-factory 这个值要保持一致
+
+2 images value值命名规则
+若为平台项目 已pt 开头
+项目为前端项目 则 pt-client- xxxxx
+项目为后端项目 则 pt-server- xxxxx
+容器名称 container_name 命名没有强制要求 建议使用 ‘images名称’ +‘环境变量值’
+===================================================================
+
+==========================================================================
+dockerfile 编写规则
+1 文件名称 :应用名称+Dockerfile
+里面内容编写 没有强制要求 按照dockerfile编写 即可
+
+==========================================================================
+
+

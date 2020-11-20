@@ -33,8 +33,8 @@
     <div class="drawer-bootom-button">
       <a-dropdown style="float: left" :trigger="['click']" placement="topCenter">
         <a-menu slot="overlay">
-          <a-menu-item key="1" @click="checkStrictly=false">父子关联</a-menu-item>
-          <a-menu-item key="2" @click="checkStrictly=true">取消关联</a-menu-item>
+          <!-- <a-menu-item key="1" @click="checkStrictly=false">父子关联</a-menu-item>
+          <a-menu-item key="2" @click="checkStrictly=true">取消关联</a-menu-item> -->
           <a-menu-item key="3" @click="checkALL">全部勾选</a-menu-item>
           <a-menu-item key="4" @click="cancelCheckALL">取消全选</a-menu-item>
           <a-menu-item key="5" @click="expandAll">展开所有</a-menu-item>
@@ -69,7 +69,7 @@ import {convert} from "~/assets/utils/index.js"
         expandedKeysss:[],
         allTreeKeys:[],
         autoExpandParent: true,
-        checkStrictly: false,
+        checkStrictly: true,
         visible: false,
         loading: false,
         formLoading:false,

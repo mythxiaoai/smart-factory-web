@@ -135,8 +135,14 @@ export default {
       //根据当前路获取实例getChildComponent(vueInstance,'/sys/role/list')
       let component = this.$utils.getChildComponent(this.$root,this.tabs[this.contextmenuIndex])
       //执行当前组件的created,mounted生命周期
-      component.$options.created.map(v=>v.call(component));
-      component.$options.mounted.map(v=>v.call(component));
+      if(component){
+        component.$options.created.map(v=>v.call(component));
+        component.$options.mounted.map(v=>v.call(component));
+      }else{
+        //全局刷新
+        this.$router.go(0);
+      }
+      
     },
   },
 }

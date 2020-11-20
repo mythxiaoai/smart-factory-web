@@ -1,6 +1,6 @@
 <template>
   <a-menu :style="style" class="contextmenu" v-show="visible" @click="handleClick" :selectedKeys="selectedKeys">
-    <a-menu-item :key="item.key" v-for="item in itemList">
+    <a-menu-item role="menuitem" :key="item.key" v-for="item in itemList">
       <a-icon role="menuitemicon" v-if="item.icon" :type="item.icon" />{{ item.text }}
     </a-menu-item>
   </a-menu>
@@ -10,11 +10,6 @@
 export default {
   name: 'Contextmenu',
   props: {
-    visible: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     itemList: {
       type: Array,
       required: true,
@@ -26,7 +21,8 @@ export default {
       left: 0,
       top: 0,
       target: null,
-      selectedKeys: []
+      selectedKeys: [],
+      visible:false,
     }
   },
   computed: {
@@ -38,13 +34,11 @@ export default {
     }
   },
   created () {
-    window.addEventListener('mousedown', e => this.closeMenu(e))
-    window.addEventListener('contextmenu', e => this.setPosition(e))
   },
   methods: {
     closeMenu (e) {
       if (['menuitemicon', 'menuitem'].indexOf(e.target.getAttribute('role')) < 0) {
-        this.$emit('update:visible', false)
+        this.visible = false
       }
     },
     setPosition (e) {
@@ -53,8 +47,19 @@ export default {
       this.target = e.target
     },
     handleClick ({key}) {
-      this.$emit('select', key, this.target)
-      this.$emit('update:visible', false)
+      this.$emit('select', key)
+      this.visible = false
+    }
+  },
+  watch: {
+    visible(val){
+      if(val){
+        window.addEventListener('contextmenu',this.setPosition);
+        window.addEventListener('mousedown',this.closeMenu);
+      }else{
+        window.removeEventListener('contextmenu',this.setPosition);
+        window.removeEventListener('mousedown',this.closeMenu);
+      }
     }
   }
 }

@@ -55,9 +55,54 @@ function fromReset(val) {
  */
 function getDictVal(key) {
   let dict = Vue.ls.get('dict')
-  console.log(dict[key]);
   return dict[key] || [];
 }
+
+
+let Type = (function() {
+  let Type = {};
+  for (let i = 0, type; type = ['Undefined', 'Null', 'Boolean', 'Number', 'String', 'Function', 'Array', 'Object'][i++]; ) {
+      (function(type) {
+          Type['is' + type] = function(obj) {
+              return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+          };
+      })(type);
+  }
+  return Type;
+})();
+
+// this.$_live_type = Type;
+
+// use: this.getChildComponent(vm, 'xx-xx')
+function getChildComponent(vueInstance, componentTag) {
+    let component = null;
+    let allComp = getAllChildComp(vueInstance);
+
+    let i = allComp.findIndex(function(vm) {
+        return ~vm._name.indexOf(componentTag);
+    });
+    if (i !== -1) {
+        component = allComp[i];
+    }
+    return component;
+
+    function getAllChildComp(instance) {
+        let allComp = [], child;
+        if (Type.isObject(instance)) {
+            child = instance.$children;
+        } else if (Type.isArray(instance)) {
+            child = instance;
+        }
+        for (let i = 0; i < child.length; i++) {
+            allComp.push(child[i]);
+            if (child[i].$children.length > 0) { // 还有孩子
+                allComp = allComp.concat(getAllChildComp(child[i].$children))
+            };
+        }
+        return allComp;
+    }
+};
+
 
 export default (content, inject) => {
   //常用插件注册
@@ -69,7 +114,8 @@ export default (content, inject) => {
   inject('_', _)
   //工具类
   inject('utils', {
-    fromReset
+    fromReset,
+    getChildComponent
   })
   //字典
   inject('dict', getDictVal)

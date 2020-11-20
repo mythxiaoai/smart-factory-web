@@ -23,7 +23,7 @@
 
             <a-popconfirm
               title="确定删除吗?"
-              @confirm="() => handleDelete(text.id)"
+              @confirm="() => handleDelete(text.clientId)"
             >
               <a><a-icon type="delete" /> 删除 </a>
             </a-popconfirm>
@@ -91,7 +91,7 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.sys.user.del([id])
+      await this.$api.sys.application.del([id])
       this.list()
     },
     list() {

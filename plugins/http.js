@@ -25,7 +25,6 @@ export default ({ $axios }, inject) => {
       return $axios.$request({
         url,
         method: 'DELETE',
-        params,
         data:params,
         ...options
       })

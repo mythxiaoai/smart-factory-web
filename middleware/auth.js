@@ -1,110 +1,52 @@
 import Vue from 'vue'
 import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
+import {messageArr,imgs} from '@/assets/utils/errorTip.js';
+import { notification, message } from 'ant-design-vue'
 
 const whiteRoute = ['/login'] //不转发的白名单路由
+const testPrefix = "/test";
 export default function(content) {
-  const fromRoute = content.from
-  const currRoute = content.route
-  const router = content.app.router
-  return new Promise((resolve, reject) => {
-    //如果是登陆或者是白名单内  是否登陆都去跳转
-    const isLogin = !!Vue.ls.get('token')
-    if (~whiteRoute.indexOf(currRoute.path)) {
+  const fromRoute = content.from;
+  //路由获取
+  const route = content.route;
+  //路由实例
+  const router = content.app.router;
+  const isLogin = !!Vue.ls.get('token');
+  let menu = Vue.ls.get('permission');
+
+  //白名单
+  if(~whiteRoute.indexOf(route.path)||route.path.slice(0,4)===testPrefix){
+    content.next();
+    return;
+  }
+
+  //是否登陆
+  if(isLogin){
+    //过滤出是子节点的url
+    menu = menu.menu.filter(v=>v.leafFlag==1).map(v=>v.url);
+    //是否授权
+    if(~menu.indexOf(route.path)){
       content.next();
-      resolve();
-      return;
+    }else{
+      //当前路径是否有对应的组件就可以判断是否在全局菜单内
+      if(router.getMatchedComponents(route.path).length>0){
+        //403
+        content.error({statusCode:403,message:messageArr[403]});
+        content.next();
+      }else{
+        //404
+        content.error({statusCode:404,message:messageArr[404]});
+        content.next();
+      }
     }
-    
-    //没有登陆
-    if (isLogin) {
-      //菜单权限的加载
-      resolve();
-      return;
-    } else {
-      currRoute.path == HOMEPATH
-        ? router.push({ path: LONGINPATH })
-        : router.push({ path: LONGINPATH, query: { redirect: currRoute.path } })
-      resolve();
-      return;
-    }
-  })
-  reject()
-  //   Vue.mixin({
-  //    mounted() {
-  //       this.$nuxt.setLayout('home')
-  //     }
-  //   })
+  }else{
+    //如果没有登陆跳登陆  带上当前的path作为登录后的跳转
+      notification.warning({
+        message: "提示",
+        description: "请先登陆后访问~"
+      });
+
+    router.push({ path: LONGINPATH, query: { redirect: route.path } });
+  }
+
 }
-
-//设置默认布局为home layout
-//Vue.prototype.layout=()=>"home"
-// Vue.mixin({
-//   beforeMount() {
-//     console.log(this);
-//      window.$nuxt.setLayout('home');
-//   }
-// })
-
-// NProgress.configure({ showSpinner: false }) // NProgress Configuration
-
-// const whiteList = ['/user/login', '/user/register', '/user/register-result','/user/alteration'] // no redirect whitelist
-
-// router.beforeEach((to, from, next) => {
-//   NProgress.start() // start progress bar
-
-//   if (Vue.ls.get(ACCESS_TOKEN)) {
-//     /* has token */
-//     if (to.path === '/user/login') {
-//       next({ path: INDEX_MAIN_PAGE_PATH })
-//       NProgress.done()
-//     } else {
-//       if (store.getters.permissionList.length === 0) {
-//         store.dispatch('GetPermissionList').then(res => {
-//               const menuData = res.result.menu;
-//               if (menuData === null || menuData === "" || menuData === undefined) {
-//                 return;
-//               }
-//               let constRoutes = [];
-//               constRoutes = generateIndexRouter(menuData);
-//               // 添加主界面路由
-//               store.dispatch('UpdateAppRouter',  { constRoutes }).then(() => {
-//                 // 根据roles权限生成可访问的路由表
-//                 // 动态添加可访问路由表
-//                 router.addRoutes(store.getters.addRouters)
-//                 const redirect = decodeURIComponent(from.query.redirect || to.path)
-//                 if (to.path === redirect) {
-//                   // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-//                   next({ ...to, replace: true })
-//                 } else {
-//                   // 跳转到目的路由
-//                   next({ path: redirect })
-//                 }
-//               })
-//             })
-//           .catch(msg => {
-//             notification.error({
-//               message: '系统提示',
-//               description: msg
-//             })
-//             store.dispatch('Logout').then(() => {
-//               next({ path: '/user/login', query: { redirect: to.fullPath } })
-//             })
-//           })
-//       } else {
-//         next()
-//       }
-//     }
-//   } else {
-//     if (whiteList.indexOf(to.path) !== -1) {
-//       // 在免登录白名单，直接进入
-//       next()
-//     } else {
-//       next({ path: '/user/login', query: { redirect: to.fullPath } })
-//       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
-//     }
-//   }
-// })
-
-// router.afterEach(() => {
-//   NProgress.done() // finish progress bar
-// })

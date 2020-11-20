@@ -30,7 +30,7 @@ export const baseURL = window.location.origin+"/rjgf/api/"
 //登陆页面配置
 export const LONGINPATH = '/login';
 //首页配置
-export const HOMEPATH = '/';
+export const HOMEPATH = '/sys/diction/list';
 
 
 export const appId = "SF";

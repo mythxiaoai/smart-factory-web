@@ -36,7 +36,6 @@ function convert(list) {
       if (item.parentId in map) {
         //在map中找出父
           const parent = map[item.parentId]
-          console.log(parent);
           //添加子
           parent.children = parent.children || []
           parent.children.push(item)

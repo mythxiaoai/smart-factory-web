@@ -157,7 +157,6 @@ export default {
       })
     },
     initSearch() {
-      console.log("init");
       let query = JSON.parse(JSON.stringify(this.setHTTParams));
       //查询参数
       this.formItem.forEach((v) => {

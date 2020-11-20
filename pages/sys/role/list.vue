@@ -101,6 +101,8 @@ export default {
     async handleDelete(id) {
       await this.$api.sys.role.del([id])
       this.list()
+      //刷新全局菜单
+      this.$store.dispatch('security/currentUserPermission');
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {

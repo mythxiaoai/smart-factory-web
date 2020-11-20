@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import {messages,imgs} from '@/assets/utils/errorTip.js'
+import {messageArr,imgs} from '@/assets/utils/errorTip.js'
+import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
 export default {
   name: 'NuxtError',
   //默认是继承的布局模板
@@ -31,17 +32,18 @@ export default {
   computed: {
     data () {
       let res = {};
+      console.log(this.error);
       let {statusCode,message} = this.error;
       res.title = statusCode ;
-      res.desc = message || messages[statusCode] || "错误";
+      res.desc = message || messageArr[statusCode] || "错误";
+      console.log(message,res.desc);
       res.img = imgs[statusCode] || imgs["other"];
-      console.log(res);
       return res;
     }
   },
   methods: {
     handleToHome () {
-      this.$router.push({ path: '/' })
+      this.$router.push({ path: HOMEPATH })
     }
   },
   head () {

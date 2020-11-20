@@ -111,6 +111,8 @@ export default {
     async handleDelete(id) {
       await this.$api.sys.diction.del([id])
       this.list()
+      //刷新全局字典表
+      this.$store.dispatch('security/getAlldict');
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {

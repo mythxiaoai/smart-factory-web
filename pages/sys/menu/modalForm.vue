@@ -353,23 +353,10 @@ export default {
           ? this.$api.sys.menu.edit
           : this.$api.sys.menu.add
         await http(this.form)
-        //参数组装
-        //菜单
-        // let parmas = JSON.parse(JSON.stringify(this.form))
-        // if(this.form.menuType == 0){
-        //   let {menuType,name,url,icon,sortNo,routeFlag,internalOrExternal,status} = parmas;
-        //   parmas = {menuType,name,url,icon,sortNo,routeFlag,internalOrExternal,status}
-        // }else if(this.form.menuType == 1){
-        //   let {menuType,name,url,parentId,sortNo,routeFlag,internalOrExternal,status} = parmas;
-        //   parmas = {menuType,name,url,parentId,sortNo,routeFlag,internalOrExternal,status};
-        // }else{
-        //   let {menuType,parentId,name,perms} = parmas;
-        //   parmas = {menuType,parentId,name,perms}
-        // }
-        //this.form.id && (parms.id = this.form.id);
         this.confirmLoading = false
         this.close()
         this.$emit('refresh')
+
       })
     },
     handleCancel() {

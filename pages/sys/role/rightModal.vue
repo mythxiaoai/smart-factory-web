@@ -131,6 +131,8 @@ import {convert} from "~/assets/utils/index.js"
         await this.$api.sys.role.saveMenu(params);
         this.loading = false;
         this.close();
+        //刷新全局菜单
+        this.$store.dispatch('security/currentUserPermission');
       },
       async loadData(){
         this.formLoading = true;

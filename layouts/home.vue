@@ -8,8 +8,23 @@
       width="240"
     >
       <system-info size="small" />
-      <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']" @click="menuClick">
-        <a-menu-item key="/sys/diction/list">
+      {{ menu[0].name }}
+      <a-menu
+        theme="dark"
+        mode="inline"
+        :selectedKeys="[$route.path]"
+        :openKeys.sync="openKeys"
+        @click="menuClick"
+      >
+        <template v-for="item in menu">
+          <a-menu-item v-if="!item.children" :key="item.url">
+            <a-icon :type="item.icon" />
+            <span>{{ item.name }}</span>
+          </a-menu-item>
+          <sider-menu v-else :key="item.url" :menu-info="item" />
+        </template>
+
+        <!-- <a-menu-item key="/sys/diction/list">
           <a-icon type="user" />
           <span>数据字典</span>
         </a-menu-item>
@@ -33,6 +48,10 @@
           <a-icon type="upload" />
           <span>应用管理</span>
         </a-menu-item>
+        <a-menu-item key="/dev/gen/list">
+          <a-icon type="upload" />
+          <span>快速开发</span>
+        </a-menu-item> -->
       </a-menu>
     </a-layout-sider>
 
@@ -82,6 +101,9 @@
           </span>
         </div>
       </a-layout-header>
+      <div class="home_tab">
+        <x-tabs></x-tabs>
+      </div>
       <a-layout-content class="global-content">
         <nuxt />
       </a-layout-content>
@@ -90,40 +112,72 @@
 </template>
 <script>
 import SystemInfo from '@/components/layouts/SystemInfo.vue'
+import SiderMenu from '@/components/layouts/SiderMenu.vue'
+import XTabs from '@/components/layouts/XTabs.vue'
 
 import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
+
+import { mapGetters, mapState } from 'Vuex'
+
 export default {
   name: 'home',
   data() {
     return {
       collapsed: false,
+      openKeys: [],
     }
+  },
+  created() {
+    console.log(this)
   },
   methods: {
     menuClick: function (item) {
       let { key } = item
-      console.log(this)
       this.$router.push(key)
     },
     loginout() {
       this.$store.dispatch('security/loginout').then((v) => {
         const currPath = this.$route.path
-        currPath == HOMEPATH
-          ? this.$router.push({ path: LONGINPATH })
-          : this.$router.push({
-              path: LONGINPATH,
-              query: { redirect: currPath },
-            })
+        this.$router.push({
+          path: LONGINPATH,
+          query: { redirect: currPath },
+        })
       })
     },
   },
+  computed: {
+    ...mapState('security', ['permission']),
+    ...mapGetters('security', ['menu']),
+  },
   components: {
+    SiderMenu,
     SystemInfo,
+    XTabs,
+  },
+  watch: {
+    '$route.path': {
+      handler: function (oldVal,newVal) {
+        if(oldVal==newVal)return;
+        let menu = this.permission.menu
+        let currItem = menu.filter((v) => v.url == this.$route.path)[0]
+        if (!currItem) return []
+        let res = []
+        while (true) {
+          currItem = menu.filter((v) => v.id == currItem.parentId)[0]
+          currItem && res.push(currItem.url)
+          if (currItem.parentId === null) break
+        }
+        this.openKeys = res;
+        //tab
+        this.$store.dispatch('tab/add', this.$route.path);
+      },
+      immediate:true,
+    },
   },
 }
 </script>
 <style lang="less" scoped>
-.container{
+.container {
   height: 100vh;
 }
 .global-header {
@@ -132,10 +186,13 @@ export default {
   align-items: center;
   justify-content: space-between;
   background: #fff;
+  height: 56px;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  transform: translate3d(0, 0, 0);
   .trigger {
     display: inline-block;
     font-size: 14px;
-    line-height: 64px;
+    line-height: 56px;
     padding: 0 24px;
     cursor: pointer;
     transition: color 0.3s;

@@ -103,7 +103,7 @@ function axiosFn(content, inject) {
     //["config", "request", "response", "isAxiosError", "toJSON"]
     console.error(err)
     err = err.toJSON()
-    return errorPage({ statusCode: err.code, message: err.message }, error)
+    return errorPage({ statusCode: err.code, message: err.message }, err)
   })
 }
 

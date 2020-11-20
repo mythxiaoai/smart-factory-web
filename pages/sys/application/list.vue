@@ -108,5 +108,13 @@ export default {
   },
 }
 </script>
-<style scoped lang="less">
+<style lang="less">
+.global-content {
+  background-color: transparent !important;
+}
+</style>
+<style>
+.global-content {
+  background-color: transparent !important;
+}
 </style>

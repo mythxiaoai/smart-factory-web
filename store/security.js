@@ -1,15 +1,12 @@
 import Vue from 'vue'
-import "@/plugins/vue-ls.js"
+import {convert} from "~/assets/utils/index.js"
 //需要是函数
-let securityDefault = {
-  token: Vue.ls.get("token"),
-  //这三个直接存在local里面了
-  // buttonAuth: null,
-  // menu: null,
-  // userInfo: null
-}
 export const state = () => {
-  return Vue.ls.get('security') || securityDefault
+  return {
+    token: Vue.ls.get("token"),
+    permission: Vue.ls.get("permission"),
+    userInfo: Vue.ls.get("userInfo")
+  }
 }
 
 export const mutations = {
@@ -19,14 +16,26 @@ export const mutations = {
   },
   celar(state){
     Vue.ls.remove('token');
+    Vue.ls.remove('tabs');
     state.token = '';
-  }
+  },
+  userInfo(state, params) {
+    Vue.ls.set('userInfo', params, 7 * 24 * 60 * 60 * 1000)
+    state.userInfo = params
+  },
+  permission(state, params) {
+    Vue.ls.set('permission', params, 7 * 24 * 60 * 60 * 1000)
+    state.permission = params
+  },
+  dict(state, params) {
+    Vue.ls.set('dict', params, 7 * 24 * 60 * 60 * 1000)
+    state.dict = params
+  },
 }
 
 export const actions = {
   saveToken({ commit, getters }, params) {
     commit('saveToken', params);
-    console.log(this);
     //登陆后获取用户
     this.dispatch('security/userInfo');
     //获取数据字典
@@ -35,25 +44,35 @@ export const actions = {
     this.dispatch('security/getAlldict');
   },
   async loginout({ commit, dispatch, getters }, u) {
-    let res = await this.$api.login.loginout();
+    let res = await this.$api.login.loginout({$msg:"none"});
     res.success && commit('celar');
   },
   async userInfo({commit}, u) {
     let res = await this.$api.app.userInfo();
-    Vue.ls.set('userInfo', res.result, 7 * 24 * 60 * 60 * 1000);
+    commit('userInfo', res.result);
   },
   async currentUserPermission({commit}, u) {
     let res = await this.$api.app.currentUserPermission();
-    Vue.ls.set('permission', res.result, 7 * 24 * 60 * 60 * 1000);
+    commit('permission', res.result);
   },
   async getAlldict({commit}, u) {
     let res = await this.$api.app.getAlldict();
-    Vue.ls.set('dict', res.result, 7 * 24 * 60 * 60 * 1000);
+    commit('dict', res.result);
   }
 }
 
 export const getters = {
   isLogin(state) {
     return !!state.token
-  }
+  },
+  menu(state){
+    if(!state.permission)return [];
+    let menu = convert(state.permission.menu);
+    console.log(state.permission);
+    return menu;
+  },
+  button(state){
+    if(!state.permission)return [];
+    
+  },
 }

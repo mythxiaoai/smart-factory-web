@@ -5,6 +5,7 @@ import menu from '@/api/sys/menu.js'
 import role from '@/api/sys/role.js'
 import user from '@/api/sys/user.js'
 import application from '@/api/sys/application.js'
+import base from '@/api/sys/base.js'
 import gen from '@/api/dev/gen/index.js'
 
 export default {
@@ -15,7 +16,8 @@ export default {
     menu,
     role,
     user,
-    application
+    application,
+    base
   },
   dev:{
     gen

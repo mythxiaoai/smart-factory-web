@@ -29,6 +29,7 @@ export default function(content) {
       content.next();
     }else{
       //当前路径是否有对应的组件就可以判断是否在全局菜单内
+      console.log(route.path,router.getMatchedComponents(route.path));
       if(router.getMatchedComponents(route.path).length>0){
         //403
         content.error({statusCode:403,message:messageArr[403]});

@@ -23,8 +23,8 @@ export default {
   },
   methods: {
     show (tableId) {
-      this.$api.dev.gen.preview(tableId).then(res => {
-        this.codes = res.data
+      this.$http.get(`/generator/gen/preview/${tableId}`).then(res => {
+        this.codes = res.result
       })
       this.visible = true
     },

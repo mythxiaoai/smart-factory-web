@@ -4,7 +4,7 @@ import {messageArr,imgs} from '@/assets/utils/errorTip.js';
 import { notification, message } from 'ant-design-vue'
 
 const whiteRoute = ['/login'] //不转发的白名单路由
-const testPrefix = "/test";
+const testPrefix = "/test/";
 export default function(content) {
   const fromRoute = content.from;
   //路由获取
@@ -14,8 +14,8 @@ export default function(content) {
   const isLogin = !!Vue.ls.get('token');
   let menu = Vue.ls.get('permission');
 
-  //白名单
-  if(~whiteRoute.indexOf(route.path)||route.path.slice(0,4)===testPrefix){
+  //白名单测试路由
+  if(~whiteRoute.indexOf(route.path)||route.path.slice(0,6)===testPrefix){
     content.next();
     return;
   }
@@ -29,7 +29,6 @@ export default function(content) {
       content.next();
     }else{
       //当前路径是否有对应的组件就可以判断是否在全局菜单内
-      console.log(route.path,router.getMatchedComponents(route.path));
       if(router.getMatchedComponents(route.path).length>0){
         //403
         content.error({statusCode:403,message:messageArr[403]});

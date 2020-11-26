@@ -8,45 +8,89 @@
 // axios.patch(url[, data[, config]])
 
 /**
- * 插件目的：优化resful风格的参数 保证相同输入，减少脑力成本
- * 本来打算覆盖$axios 但是因为同一个名字注册并不会覆盖所以只能呢个用$http
- * 下次版本直接用代理连点的方式发送url的网络请求
+ * 插件目的：优化resful风格的参数 保证相同输入，减少脑力成本,优化api调用
+ * $api    调用方式   this.$api.user.list.get(parms,options)---->  url = /user/list   get为请求方法
  */
-export default ({ $axios }, inject) => {
-  const funs = {
-    $request: (options) => {
-      return $axios.$request(options)
-    },
-    $get: (url, params, options) => {
-      return $axios.$get(url, { params, ...options })
-    },
-    $delete: (url, params, options) => {
-      console.log(params);
-      return $axios.$request({
-        url,
-        method: 'DELETE',
-        data:params,
-        ...options
-      })
-    },
-    $post: (url, params, options) => {
-      return $axios.$post(url, params, options)
-    },
-    $put: (url, params, options) => {
-      return $axios.$put(url, params, options)
-    },
-    $patch: (url, params, options) => {
-      return $axios.$patch(url, params, options)
-    }
+
+export default ({$axios}, inject) => {
+  //全方法
+  const methods = ['get', 'delete', 'post', 'put', 'patch']
+  //传data的方法
+  let dataArr = ['delete', 'post', 'put', 'patch']
+  //传paarms的方法
+  let paramsArr = ['get']
+  /**
+返回事例
+{
+  url: '/sys/user/list',
+  method: 'get',
+  params: { data: 1 },
+  options: { set: 333 }
+}
+ */
+  let cb = function(obj) {
+    //参数处理
+    obj.data = dataArr.includes(obj.method) && obj.params;
+    obj.params = paramsArr.includes(obj.method) && obj.params;
+    //优先用用户传进来的options
+    let opts = Object.assign({}, obj, obj.options);
+    return $axios.$request(opts)
   }
-  const http = new Proxy(
-    {},
-    {
-      get: (target, key) => {
-        return funs[key]
+
+  //全路径当做url匹配
+  const api = proxyMethod(cb);
+  const http = new Proxy({},{
+    get:(target,key)=>{
+      if(!methods.includes(key)){
+        console.error( "http的调用方法只限制 'get', 'delete', 'post', 'put', 'patch'");
+        return {};
       }
+      return (url, params,options={})=>{
+        //参数处理
+        options.url = url;
+        options.method = key;
+        options.data = dataArr.includes(key) && params;
+        options.params = paramsArr.includes(key) && params;
+        return $axios.$request(options)
+      };
     }
-  )
-  
+  });
+ 
+  inject('api', api)
   inject('http', http)
+}
+
+
+function proxyMethod(callback, urlPath = '') {
+  const methods = ['get', 'delete', 'post', 'put', 'patch']
+  let fn = function() {
+    return new Proxy(
+      {},
+      {
+        get: (target, key) => {
+          if (methods.includes(key)) {
+            //每次调用完后url清空
+            let url = urlPath;
+            urlPath = '';
+            return (params = {}, options = {}) => {
+              return (
+                callback &&
+                callback.call(null, {
+                  url,
+                  method: key,
+                  params,
+                  options
+                })
+              )
+            
+            }
+          } else {
+            urlPath += `/${key}`
+            return fn(callback, urlPath)
+          }
+        }
+      }
+    )
+  }
+   return fn(callback, urlPath)
 }

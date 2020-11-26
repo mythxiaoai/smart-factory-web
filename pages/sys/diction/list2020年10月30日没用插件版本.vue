@@ -86,7 +86,7 @@
 <script>
 import modalForm from './modalForm.vue'
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -142,7 +142,7 @@ export default {
       this.list();
     },
     async handleDelete(id) {
-      await this.$api.sys.diction.del([id]);
+      await this.$http.sys.diction.del([id]);
       this.list();
     },
     searchQuery() {
@@ -160,7 +160,7 @@ export default {
       this.list();
     },
     async list() {
-      let { result } = await this.$api.sys.diction.list(this.queryParam)
+      let { result } = await this.$http.sys.diction.list(this.queryParam)
       this.dataSource = result.records;
       this.pagination.total = result.total;
     },

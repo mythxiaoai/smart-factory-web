@@ -159,14 +159,14 @@ export default {
   name: 'modalForm',
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$api.sys.user.verify({
+      let res = await this.$api.system.sys.user.checkUsername.get({
         userId: this.form.id,
         username: value,
       })
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
     let unique3 = async (rule, value, callback) => {
-      let res = await this.$api.sys.user.verify2({
+      let res = await this.$api.system.sys.user.checkWorkNo.get({
         userId: this.form.id,
         workNo: value,
       })
@@ -252,10 +252,9 @@ export default {
   methods: {
     initForm(data, parmas) {
       //角色下拉的初始化
-      this.$api.sys.role.queryall().then((res) => {
+      this.$api.system.sys.role.queryall.get().then((res) => {
         this.roleList = res.result
       })
-      console.log(parmas);
       parmas && Object.assign(this.form, parmas)
     },
     close() {
@@ -300,8 +299,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.sys.user.edit
-          : this.$api.sys.user.add
+          ? this.$api.system.sys.user.edit.put
+          : this.$api.system.sys.user.add.post
 
         await http(this.form)
 

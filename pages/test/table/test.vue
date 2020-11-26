@@ -23,11 +23,11 @@
 
 <script>
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.tablePageConfig.getAsyncDate = async (params, next) => {
-      let { result } = await this.$api.sys.diction.list(params)
+      let { result } = await this.$http.get("/ststem/sys/dict/list",params)
       next(result.records, result.total)
     }
   },
@@ -105,7 +105,7 @@ export default {
       this.list()
     },
     async handleDelete(id) {
-      await this.$api.sys.diction.del([id])
+      await this.$http.sys.diction.del([id])
       this.list()
     },
     searchQuery() {
@@ -123,7 +123,7 @@ export default {
       this.list()
     },
     async list(next) {
-      let { result } = await this.$api.sys.diction.list(this.queryParam)
+      let { result } = await this.$http.sys.diction.list(this.queryParam)
       next(result.records, result.total)
     },
   },

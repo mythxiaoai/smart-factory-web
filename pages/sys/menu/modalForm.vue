@@ -202,7 +202,7 @@ export default {
       }
       
       //parentPermissionId perName permissionId
-      let res = await this.$api.sys.menu.checkSubName({
+      let res = await this.$api.system.sys.permission.checkSubName.get({
         parentPermissionId: this.form.parentId,
         perName: value,
         permissionId: this.form.id,
@@ -350,8 +350,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.sys.menu.edit
-          : this.$api.sys.menu.add
+          ? this.$api.system.sys.permission.edit
+          : this.$api.system.sys.permission.add
         await http(this.form)
         this.confirmLoading = false
         this.close()

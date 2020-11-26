@@ -128,7 +128,7 @@ export default {
       this.$refs.formModel.validate(async (valid) => {
         if (!valid) return
         this.confirmLoading = true
-        let res = await this.$api.sys.user.resetPassword({
+        let res = await this.$http.put("/system/sys/user/resetPassword",{
           newPassword: this.form.rePassword,
           username: this.form.username,
         })

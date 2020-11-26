@@ -171,7 +171,7 @@ export default {
   name: 'modalForm',
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$api.sys.application.verify({
+      let res = await this.$http.get('/system/sys/client/checkClientId',{
         clientId: value,
       })
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
@@ -289,8 +289,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.isUpdate
-          ? this.$api.sys.application.edit
-          : this.$api.sys.application.add
+          ? this.$api.system.sys.client.edit.put
+          : this.$api.system.sys.client.add.post
         //数据处理
         let result = dealForm(this.form);
         

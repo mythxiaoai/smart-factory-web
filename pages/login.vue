@@ -100,7 +100,6 @@ export default {
   },
   created() {
     this.handleChangeCheckCode();
-    
   },
   methods: {
     //...mapActions(['Login', 'Logout']),
@@ -116,7 +115,7 @@ export default {
         if (!error) {
           values.appId = appId;
           values.checkKey = this.checkKey;
-          this.$api.login.login(values).then((res) => {
+          this.$http.post("/system/captchaLogin",values).then((res) => {
             if (res.success) {
               this.$store.dispatch('security/saveToken', res.result.token);
               const redirect = this.$route.query.redirect || HOMEPATH
@@ -141,8 +140,7 @@ export default {
     },
     handleChangeCheckCode() {
       this.checkKey = md5(Date.now());
-      this.$api.login
-        .verify({ key: this.checkKey})
+      this.$http.get("/system/open/randomImage",{ key: this.checkKey})
         .then((res) => {
           this.randCodeImage = res.result.imgStr
           this.requestCodeSuccess = true

@@ -53,7 +53,7 @@ import modalForm from './modalForm.vue'
 import rightModal from './rightModal.vue'
 import user from './rightList.vue'
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -99,14 +99,14 @@ export default {
       this.$refs.rightModal.show(id)
     },
     async handleDelete(id) {
-      await this.$api.sys.role.del([id])
+      await this.$api.system.sys.role.deleteBatch.delete([id])
       this.list()
       //刷新全局菜单
       this.$store.dispatch('security/currentUserPermission');
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.role.list(params)
+        let { result } = await this.$api.system.sys.role.list.get(params)
         next(result.records, result.total)
       };
     },

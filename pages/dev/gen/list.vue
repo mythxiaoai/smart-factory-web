@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import STable from './modules/Table/index.js'
+import STable from '@/pages/dev/gen/modules/Table/index.js'
 // import { getGenList, delGen, batchGenCode } from '@/api/gen'
 // import { checkPermission } from '@/utils/permissions'
 import DbListModal from './modules/DbListModal.vue'
@@ -133,7 +133,7 @@ export default {
       range: null,
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return this.$api.dev.gen.getGenList(Object.assign(parameter, this.queryParam))
+        return this.$http.get('/generator/gen/list',Object.assign(parameter, this.queryParam))
       },
       commonStatus: [],
       selectedRowKeys: [],
@@ -179,14 +179,14 @@ export default {
       this.handleGen(tables)
     },
     handleGen (tables) {
-      genCodeZip(this.$api.dev.gen.batchGenCode, tables.join(','))
+      genCodeZip(this.$http.batchGenCode.get, tables.join(','))
     },
     handleOk () {
       this.$refs.table.refresh(true)
     },
     delByIds (ids) {
-      this.$api.dev.gen.delGen({ ids: ids.join(',') }).then(res => {
-        if (res.code === 0) {
+      this.$http.delete('/generator/gen/remov',{ ids: ids.join(',') }).then(res => {
+        if (res.code === 200) {
           this.$message.success(`删除成功`)
           this.handleOk()
         } else {

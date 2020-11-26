@@ -65,7 +65,6 @@
 import modalForm from './modalForm.vue'
 import modalPassword from './modalPassword.vue'
 export default {
-  async asyncData({ $api }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -167,7 +166,7 @@ export default {
   },
   methods: {
     async handleResetPassword(username){
-      let res = await this.$api.sys.user.resetPassword({
+      let res = await this.$api.system.sys.user.resetPassword.put({
         username,
         newPassword:"123456",
       })
@@ -175,14 +174,14 @@ export default {
       this.list()
     },
     async handleFreeze(id) {
-      await this.$api.sys.user.freeze({
+      await this.$api.system.sys.user.frozenBatch.put({
         status: 2,
         userIds: [id],
       })
       this.list()
     },
     async handleUnfreeze(id) {
-      await this.$api.sys.user.freeze({
+      await this.$api.system.sys.user.frozenBatch.put({
         status: 1,
         userIds: [id],
       })
@@ -193,7 +192,6 @@ export default {
       this.$refs.modalForm.initForm()
     },
     handlePassword(parmas) {
-      console.log(this.$refs);
       this.$refs.modalPassword.visible = true
       let result = JSON.parse(JSON.stringify(parmas))
       this.$refs.modalPassword.initForm(null,result)
@@ -204,12 +202,12 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.sys.user.del([id])
+      await this.$api.system.sys.deleteBatch.delete([id])
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.user.list(params)
+        let { result } = await this.$api.system.sys.user.list.get(params)
         next(result.records, result.total)
       }
     },

@@ -22,7 +22,7 @@ export default {
     //console.log(this.$nuxt);
   },
   created(){
-    // console.log("created",this.$api);
+    // console.log("created",this.$http);
     // console.log(window.$nuxt);
   }
 }

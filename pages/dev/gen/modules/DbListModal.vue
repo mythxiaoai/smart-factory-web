@@ -9,24 +9,24 @@
   >
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
+            <a-form-item label="当前数据库">
+               <a-select v-model="selectBase"  @change="changeBase" style="width:240px">
+                <a-select-option v-for="item in selectBaseList" :key="item">
+                  {{item}}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+
             <a-form-item label="表名称">
               <a-input placeholder="请输入" v-model="queryParam.tableName"/>
             </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
             <a-form-item label="表描述">
               <a-input placeholder="请输入" v-model="queryParam.tableComment"/>
             </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
             </span>
-          </a-col>
-        </a-row>
       </a-form>
     </div>
     <s-table
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { STable } from './Table/index'
+import STable from '@/pages/dev/gen/modules/Table/index.js'
 // import { getDbList, importTable } from '@/api/gen'
 // import { checkPermission } from '@/utils/permissions'
 
@@ -71,7 +71,10 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: { },
+      queryParam: {
+      },
+      selectBaseList:[],
+      selectBase:"",
       // 表头
       columns: [
         {
@@ -99,7 +102,11 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return this.$api.dev.gen.getDbList(Object.assign(parameter, this.queryParam))
+        return this.$http.get('/generator/gen/db/list',Object.assign(parameter, this.queryParam),{
+          headers: {
+            tenantName:this.selectBase
+          }
+        })
       },
       confirmLoading: false,
       selectedRowKeys: [],
@@ -114,8 +121,16 @@ export default {
   created () {
   },
   methods: {
-    show () {
-      this.visible = true
+    changeBase(){
+      this.$refs.table && this.$refs.table.refresh(true)
+    },
+    async show () {
+      this.visible = true;
+      let res = await this.$http.get("/generator/datasource/list",{pageSize:999});
+      this.selectBaseList = res.result.records.map(v=>v.pollName);
+      this.selectBase = this.selectBaseList[0];
+
+
       this.$refs.table && this.$refs.table.refresh(true)
     },
     onSelectChange (selectedRowKeys, selectedRows) {
@@ -132,8 +147,8 @@ export default {
     handleSubmit (e) {
       e.preventDefault()
       this.confirmLoading = true
-      this.$api.dev.gen.importTable({ tables: this.selectedRowKeys.join(',') }).then(res => {
-        if (res.code === 0) {
+      this.$http.post('/generator/gen/importTable',{ tables: this.selectedRowKeys.join(',') }).then(res => {
+        if (res.code === 200) {
           this.$message.success('保存成功')
           this.$emit('ok')
           this.visible = false

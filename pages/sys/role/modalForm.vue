@@ -49,7 +49,7 @@ export default {
   name: 'modalForm',
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$api.sys.role.verify({
+      let res = await this.$http.get("/system/sys/role/checkRoleCode",{
         roleId: this.form.id,
         roleCode: value,
       })
@@ -126,8 +126,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.sys.role.edit
-          : this.$api.sys.role.add
+          ? this.$api.system.sys.role.edit.put
+          : this.$api.system.sys.role.add.get
 
         await http(this.form)
 

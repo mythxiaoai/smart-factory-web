@@ -160,11 +160,10 @@ export default {
         if (!valid) return
         this.confirmLoading = true
         //字典
-        const http = this.form.id
-          ? this.$api.sys.base.edit
-          : this.$api.sys.base.add
+        let res = this.form.id?
+        "":
+        await this.$http.post('/generator/datasources/addDruid')
 
-        let res = await http(this.form)
         this.confirmLoading = false
         if(res.success){
           this.close()

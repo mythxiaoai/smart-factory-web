@@ -50,7 +50,7 @@
 import modalForm from '@/pages/sys/user/modalForm.vue'
 import modalTable from './modalTable.vue'
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     //this.list()
@@ -117,7 +117,7 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      let res = await this.$api.sys.application.delUser({
+      let res = await this.$http.delete('/system/sys/client/delClientAdmin',{
         clientId: this.tablePageConfig.setHTTParams.clientId,
         userIds: [id],
       })
@@ -126,7 +126,7 @@ export default {
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.application.userList(params)
+        let { result } = await this.$http.get('/system/sys/user/clientUserList', params)
         next(result.records, result.total)
       }
     },

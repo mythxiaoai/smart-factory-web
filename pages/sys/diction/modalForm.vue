@@ -161,7 +161,7 @@ export default {
   name: 'modalForm',
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$api.sys.diction.verify1({
+      let res = await this.$http.get('/system/sys/dict/checkDictCode',{
         dictId: this.form.id,
         dictCode: this.form.dictCode,
       })
@@ -188,7 +188,7 @@ export default {
 
     let unique3 = async (rule, value, callback) => {
       //异步校验
-      let res = await this.$api.sys.diction.verify2({
+      let res = await this.$http.get("/system/sys/dict/checkDictItemCode",{
         dictId: this.form.id || '',
         dictItemId: rule.id,
         dictItemCode: value,
@@ -302,8 +302,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.sys.diction.edit
-          : this.$api.sys.diction.add
+          ? this.$api.system.sys.dict.edit.put
+          : this.$api.system.sys.dict.add.post
         this.form.$msg = 'none' //不弹通知
         let res = await http(this.form)
         //做新增  先添加父id  在搞事
@@ -312,8 +312,8 @@ export default {
         let promiseArr = []
         this.form.dictItemList.map((v) => {
           const http = v.id
-            ? this.$api.sys.diction.editItem
-            : this.$api.sys.diction.addItem
+            ? this.$api.system.sys.dict.item.edit.put
+            : this.$api.system.sys.dict.item.add.post
           //编辑和新增都加上字典的id
           v.dictId = this.form.id
           promiseArr.push(http(v))
@@ -350,7 +350,7 @@ export default {
     async minus(index) {
       console.log(this.form.dictItemList[index].id)
       if (this.form.dictItemList[index].id) {
-        const res = await this.$api.sys.diction.delItem([
+        const res = await this.$http.delete("/system/sys/dict/item/deleteBatch",[
           this.form.dictItemList[index].id,
         ])
       }

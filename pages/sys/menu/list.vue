@@ -46,7 +46,7 @@ import modalForm from './modalForm.vue'
 import {convert} from "~/assets/utils/index.js"
 let menuList = null
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -108,12 +108,12 @@ export default {
       this.$refs.modalForm.initForm({ menuList })
     },
     async handleDelete(id) {
-      await this.$api.sys.menu.del([id])
+      await this.$api.system.sys.permission.deleteBatch.delete([id])
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.menu.list(params)
+        let { result } = await this.$api.system.sys.permission.list.get(params)
         result = convert(result);
         //做接收 表格弹框下拉用
         menuList = JSON.parse(JSON.stringify(result))

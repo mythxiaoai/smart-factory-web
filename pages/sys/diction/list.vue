@@ -39,7 +39,7 @@
 <script>
 import modalForm from './modalForm.vue'
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -109,14 +109,14 @@ export default {
       this.$refs.modalForm.form = result
     },
     async handleDelete(id) {
-      await this.$api.sys.diction.del([id])
+      await this.$http.sys.diction.del([id])
       this.list()
       //刷新全局字典表
       this.$store.dispatch('security/getAlldict');
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.diction.list(params)
+        let { result } = await this.$http.get('/system/sys/dict/list',params)
         next(result.records, result.total)
       }
     },

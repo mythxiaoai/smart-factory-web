@@ -61,12 +61,12 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.sys.base.del([id])
+      await this.$http.delete('/generator/datasources',[id])
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.base.list(params)
+        let { result } = await this.$http.get('/generator/datasource/list',params)
         next(result.records, result.total)
       }
     },

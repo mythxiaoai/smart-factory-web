@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     //this.list()
@@ -94,7 +94,7 @@ export default {
     },
     async handleOk() {
       console.log(this.selectedRowKeys);
-      await this.$api.sys.application.addUser({
+      await this.$http.post('/system/sys/client/addClientAdmin',{
         "clientId":this.tablePageConfig.setHTTParams.clientId,
         "userIds": this.selectedRowKeys
       });
@@ -106,7 +106,7 @@ export default {
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.user.list(params)
+        let { result } = await this.$http.get('/system/sys/client/list', params)
         next(result.records, result.total)
       }
     },

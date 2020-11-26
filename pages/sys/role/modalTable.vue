@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     //this.list()
@@ -94,7 +94,7 @@ export default {
     },
     async handleOk() {
       console.log(this.selectedRowKeys);
-      await this.$api.sys.role.addSysUserRole({
+      await this.$http.post('/system/sys/role/addSysUserRole',{
         "roleId":this.tablePageConfig.setHTTParams.roleId,
         "userIdList": this.selectedRowKeys
       });
@@ -106,7 +106,7 @@ export default {
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.role.otherUserRoleList(params)
+        let { result } = await this.$api.system.sys.user.otherUserRoleList.get(params)
         next(result.records, result.total)
       }
     },

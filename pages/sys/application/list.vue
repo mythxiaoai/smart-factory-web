@@ -45,7 +45,7 @@
 import modalForm from './modalForm.vue'
 import user from './rightList.vue'
 export default {
-  async asyncData({ $api }) {},
+  async asyncData({ $http }) {},
   fetch({ store, params }) {},
   created() {
     this.list()
@@ -91,12 +91,12 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.sys.application.del([id])
+      await this.$http.delete('/system/sys/client/deleteBatch',[id])
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.sys.application.list(params)
+        let { result } = await this.$http.get('/system/sys/client/list',params)
         next(result.records, result.total)
       }
     },

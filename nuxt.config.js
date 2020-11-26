@@ -50,7 +50,6 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/style-resources',
-    '~/modules/api/api-inject.js'
   ],
   axios: {
     proxy: true

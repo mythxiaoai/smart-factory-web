@@ -44,19 +44,19 @@ export const actions = {
     this.dispatch('security/getAlldict');
   },
   async loginout({ commit, dispatch, getters }, u) {
-    let res = await this.$api.login.loginout({$msg:"none"});
+    let res = await this.$http.post("/system/captchaLogout",{$msg:"none"});
     res.success && commit('celar');
   },
   async userInfo({commit}, u) {
-    let res = await this.$api.app.userInfo();
+    let res = await this.$http.get("/system/userInfo");
     commit('userInfo', res.result);
   },
   async currentUserPermission({commit}, u) {
-    let res = await this.$api.app.currentUserPermission();
+    let res = await this.$http.get("/system/currentUserPermission");
     commit('permission', res.result);
   },
   async getAlldict({commit}, u) {
-    let res = await this.$api.app.getAlldict();
+    let res = await this.$http.get("/system/getAlldict");
     commit('dict', res.result);
   }
 }

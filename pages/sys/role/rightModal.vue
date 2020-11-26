@@ -128,7 +128,7 @@ import {convert} from "~/assets/utils/index.js"
           lastpermissionIds:this.checkedKeys
         };
         this.loading = true;
-        await this.$api.sys.role.saveMenu(params);
+        await this.$api.system.sys.permission.saveRolePermission.post(params);
         this.loading = false;
         this.close();
         //刷新全局菜单
@@ -136,8 +136,8 @@ import {convert} from "~/assets/utils/index.js"
       },
       async loadData(){
         this.formLoading = true;
-        let menuList = await this.$api.sys.menu.list();
-        let currMenuList = await this.$api.sys.role.menuList({roleId:this.roleId});
+        let menuList = await this.$api.system.sys.permission.list.get();
+        let currMenuList = await this.$api.system.sys.permission.queryRolePermission.get({roleId:this.roleId});
         this.formLoading = false;
 
         this.allTreeKeys = menuList.result.map(v=>v.id);

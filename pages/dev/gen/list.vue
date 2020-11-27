@@ -179,7 +179,7 @@ export default {
       this.handleGen(tables)
     },
     handleGen (tables) {
-      genCodeZip('/generator/gen/batchGenCode', tables.join(','))
+      genCodeZip.call(this,'/generator/gen/batchGenCode', tables.join(','))
     },
     handleOk () {
       this.$refs.table.refresh(true)

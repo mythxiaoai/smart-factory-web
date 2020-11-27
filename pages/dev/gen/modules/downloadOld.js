@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const downloadUrl = '/system/common/download'
 
 const mimeMap = {
@@ -7,7 +9,7 @@ const mimeMap = {
 }
 
 export function exportExcel (url, params) {
-  this.$axios.request({
+  axios({
     url: url,
     method: 'post',
     params: params
@@ -23,7 +25,7 @@ export function exportExcel (url, params) {
  * @param {String} filename 文件名
  */
 export function downloadXlsx (filename) {
-  this.$axios.request({
+  axios({
     url: downloadUrl,
     method: 'get',
     params: { fileName: filename, delete: true },
@@ -39,7 +41,7 @@ export function downloadXlsx (filename) {
  * @param {String} tables 表名
  */
 export function genCodeZip (url, tables) {
-  this.$axios.request({
+  axios({
     url: url,
     method: 'get',
     params: { tables: tables },

@@ -1,34 +1,42 @@
 <template>
-<div>
-  <a-tabs
-    :activeKey="$route.path"
-    tab-position="top"
-    class="home_tab"
-    @tabClick="tabClick"
-    @contextmenu.native.prevent="contextmenu"
-  >
-    <a-tab-pane v-for="(item, index) of data" :key="item.url">
-      <template #tab>
-        <span class="js_tab_pane" :data-index="index">
-         {{ item.name}}
-          <a-icon v-if="!isHomePage(item.url)" @click.stop="close(index)" class="close_icon" type="close"/>
-        </span>
-        
-      </template>
-    </a-tab-pane>
-  </a-tabs>
-  <contextmenu ref="contextmenu" :itemList="menuItemList" style="z-index: 9999;" @select="onMenuSelect"/>
-</div>
-  
+  <div>
+    <a-tabs
+      :activeKey="$route.path"
+      tab-position="top"
+      class="home_tab"
+      @tabClick="tabClick"
+      @contextmenu.native.prevent="contextmenu"
+    >
+      <a-tab-pane v-for="(item, index) of data" :key="item.url">
+        <template #tab>
+          <span class="js_tab_pane" :data-index="index">
+            {{ item.name }}
+            <a-icon
+              v-if="!isHomePage(item.url)"
+              @click.stop="close(index)"
+              class="close_icon"
+              type="close"
+            />
+          </span>
+        </template>
+      </a-tab-pane>
+    </a-tabs>
+    <contextmenu
+      ref="contextmenu"
+      :itemList="menuItemList"
+      style="z-index: 9999"
+      @select="onMenuSelect"
+    />
+  </div>
 </template>
 
 <script>
 import { mapState } from 'Vuex'
-import { HOMEPATH } from '@/assets/config/appConfig.js';
+import { HOMEPATH, LONGINPATH } from '@/assets/config/appConfig.js'
 import contextmenu from './Contextmenu'
 
 export default {
-  components:{contextmenu},
+  components: { contextmenu },
   name: 'homeTab',
   data() {
     return {
@@ -38,7 +46,7 @@ export default {
         { key: '2', icon: 'arrow-right', text: '关闭右侧' },
         { key: '3', icon: 'close', text: '关闭其它' },
       ],
-      contextmenuIndex:1,
+      contextmenuIndex: 1,
     }
   },
   computed: {
@@ -62,116 +70,119 @@ export default {
       this.$router.push(tab[index - 1])
     },
     isHomePage(key) {
-      return key === HOMEPATH;
+      return key === HOMEPATH
     },
     contextmenu(e) {
-      this.$refs.contextmenu.visible = true;
+      this.$refs.contextmenu.visible = true
       //找index
       //父找子
-      let dom = e.target.querySelector(".js_tab_pane");
-      if(dom){
-        this.contextmenuIndex = dom.dataset.index*1;
-      }else{
-      //子找父
-        let dom = closest(e.target,"js_tab_pane");
-        this.contextmenuIndex = dom.dataset.index*1;
+      let dom = e.target.querySelector('.js_tab_pane')
+      if (dom) {
+        this.contextmenuIndex = dom.dataset.index * 1
+      } else {
+        //子找父
+        let dom = closest(e.target, 'js_tab_pane')
+        this.contextmenuIndex = dom.dataset.index * 1
       }
     },
-    onMenuSelect(key){
-        // { key: '4', icon: 'reload', text: '刷 新' },
-        // { key: '1', icon: 'arrow-left', text: '关闭左侧' },
-        // { key: '2', icon: 'arrow-right', text: '关闭右侧' },
-        // { key: '3', icon: 'close', text: '关闭其它' },
-        let json = {
-          1:"closeLeft",
-          2:"closeRight",
-          3:"closeOther",
-          4:"reflash",
-        }
-        this[json[key]]();
+    onMenuSelect(key) {
+      // { key: '4', icon: 'reload', text: '刷 新' },
+      // { key: '1', icon: 'arrow-left', text: '关闭左侧' },
+      // { key: '2', icon: 'arrow-right', text: '关闭右侧' },
+      // { key: '3', icon: 'close', text: '关闭其它' },
+      let json = {
+        1: 'closeLeft',
+        2: 'closeRight',
+        3: 'closeOther',
+        4: 'reflash',
+      }
+      this[json[key]]()
     },
-    closeLeft(){
+    closeLeft() {
       //排除首页,和第一个
-      if(this.contextmenuIndex <= 1)return;
+      if (this.contextmenuIndex <= 1) return
       //删除
-      let tabs = [...this.tabs];
-      let currIndex = tabs.indexOf(this.$route.path);
-      let endtabs = tabs.slice(this.contextmenuIndex);
-      this.$store.dispatch('tab/save', [tabs[0],...endtabs]);
+      let tabs = [...this.tabs]
+      let currIndex = tabs.indexOf(this.$route.path)
+      let endtabs = tabs.slice(this.contextmenuIndex)
+      this.$store.dispatch('tab/save', [tabs[0], ...endtabs])
       //是否需要指定当前
-      if(this.contextmenuIndex>0&&currIndex<this.contextmenuIndex){
-        this.$router.push(tabs[this.contextmenuIndex]);
+      if (this.contextmenuIndex > 0 && currIndex < this.contextmenuIndex) {
+        this.$router.push(tabs[this.contextmenuIndex])
       }
     },
-    closeRight(){
+    closeRight() {
       //删除
-      let tabs = [...this.tabs];
-      let currIndex = tabs.indexOf(this.$route.path);
-      let stabs = tabs.slice(0,this.contextmenuIndex+1);
-      this.$store.dispatch('tab/save', stabs);
+      let tabs = [...this.tabs]
+      let currIndex = tabs.indexOf(this.$route.path)
+      let stabs = tabs.slice(0, this.contextmenuIndex + 1)
+      this.$store.dispatch('tab/save', stabs)
       //是否需要指定当前
-      if(currIndex>this.contextmenuIndex){
-        this.$router.push(tabs[this.contextmenuIndex]);
+      if (currIndex > this.contextmenuIndex) {
+        this.$router.push(tabs[this.contextmenuIndex])
       }
     },
-    closeOther(){
+    closeOther() {
       //删除
-      let tabs = [...this.tabs];
-      let currIndex = tabs.indexOf(this.$route.path);
-      let tbsOther = [];
-      if(0===this.contextmenuIndex){
-        tbsOther = [tabs[this.contextmenuIndex]];
-      }else{
-        tbsOther = [tabs[0],tabs[this.contextmenuIndex]];
+      let tabs = [...this.tabs]
+      let currIndex = tabs.indexOf(this.$route.path)
+      let tbsOther = []
+      if (0 === this.contextmenuIndex) {
+        tbsOther = [tabs[this.contextmenuIndex]]
+      } else {
+        tbsOther = [tabs[0], tabs[this.contextmenuIndex]]
       }
-      this.$store.dispatch('tab/save',tbsOther);
+      this.$store.dispatch('tab/save', tbsOther)
       //是否需要指定当前
-      if(currIndex>0&&this.contextmenuIndex!=currIndex){
-        this.$router.push(tabs[this.contextmenuIndex]);
+      if (currIndex > 0 && this.contextmenuIndex != currIndex) {
+        this.$router.push(tabs[this.contextmenuIndex])
       }
     },
-    reflash(){
+    reflash() {
       //根据当前路获取实例getChildComponent(vueInstance,'/sys/role/list')
-      let component = this.$utils.getChildComponent(this.$root,this.tabs[this.contextmenuIndex])
+      let component = this.$utils.getChildComponent(
+        this.$root,
+        this.tabs[this.contextmenuIndex]
+      )
       //执行当前组件的created,mounted生命周期
-      if(component){
-        component.$options.created.map(v=>v.call(component));
-        component.$options.mounted.map(v=>v.call(component));
-      }else{
+      if (component) {
+        component.$options.created.map((v) => v.call(component))
+        component.$options.mounted.map((v) => v.call(component))
+      } else {
         //全局刷新
-        this.$router.go(0);
+        this.$router.go(0)
       }
     },
   },
   watch: {
     '$route.path': {
-      handler: function (oldVal,newVal) {
+      handler: function (oldVal, newVal) {
         //如果当前没有就添加路由
-        if(oldVal==newVal)return;
-        if(this.tabs.includes(this.$route.path)==false){
-          this.$store.dispatch('tab/add', this.$route.path);
+        if (oldVal == newVal) return
+        if (
+          this.tabs.includes(this.$route.path) == false &&
+          this.$route.path != LONGINPATH
+        ) {
+          this.$store.dispatch('tab/add', this.$route.path)
         }
       },
-      immediate:true,
+      immediate: true,
     },
   },
 }
 
-
-function closest(dom,className){
-  if(hasClass(dom,className)){
-    return dom;
-  }else{
-    dom = dom.parentElement;
-    return closest(dom,className);
+function closest(dom, className) {
+  if (hasClass(dom, className)) {
+    return dom
+  } else {
+    dom = dom.parentElement
+    return closest(dom, className)
   }
 }
 
-function hasClass(dom,className){
-  return !!~Array.from(dom.classList).indexOf(className);
+function hasClass(dom, className) {
+  return !!~Array.from(dom.classList).indexOf(className)
 }
-
-
 </script>
 
 <style scoped>

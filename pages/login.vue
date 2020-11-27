@@ -84,6 +84,7 @@
 import md5 from 'md5'
 import { mapActions } from 'vuex'
 import { HOMEPATH, appId } from '@/assets/config/appConfig.js'
+import { timeFix } from '@/assets/utils/index.js'
 export default {
   layout: 'login',
   data() {
@@ -115,9 +116,14 @@ export default {
         if (!error) {
           values.appId = appId;
           values.checkKey = this.checkKey;
-          this.$http.post("/system/captchaLogin",values).then((res) => {
+          values.$msg = "none";
+          this.$http.post("/system/captchaLogin",values).then(async (res) => {
             if (res.success) {
-              this.$store.dispatch('security/saveToken', res.result.token);
+              await this.$store.dispatch('security/saveToken', res.result.token);
+              this.$notification.success({
+                  message: '欢迎',
+                  description: `${timeFix()}，欢迎回来`
+                })
               const redirect = this.$route.query.redirect || HOMEPATH
               this.$router.push(redirect)
             } else {

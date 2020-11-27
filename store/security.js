@@ -5,7 +5,7 @@ export const state = () => {
   return {
     token: Vue.ls.get("token"),
     permission: Vue.ls.get("permission"),
-    userInfo: Vue.ls.get("userInfo")
+    userInfo: Vue.ls.get("userInfo"),
   }
 }
 
@@ -32,18 +32,20 @@ export const mutations = {
   dict(state, params) {
     Vue.ls.set('dict', params, 7 * 24 * 60 * 60 * 1000)
     state.dict = params
-  },
+  }
 }
 
 export const actions = {
   saveToken({ commit, getters }, params) {
     commit('saveToken', params);
     //登陆后获取用户
-    this.dispatch('security/userInfo');
+    let promise1 = this.dispatch('security/userInfo');
     //获取数据字典
-    this.dispatch('security/currentUserPermission');
+    let promise2 = this.dispatch('security/currentUserPermission');
     //获取权限信息
-    this.dispatch('security/getAlldict');
+    let promise3 = this.dispatch('security/getAlldict');
+
+    return Promise.all([promise1,promise2,promise3]);
   },
   async loginout({ commit, dispatch, getters }, u) {
     let res = await this.$http.post("/system/captchaLogout",{$msg:"none"});
@@ -52,14 +54,17 @@ export const actions = {
   async userInfo({commit}, u) {
     let res = await this.$http.get("/system/userInfo");
     commit('userInfo', res.result);
+    return Promise.resolve(res);
   },
   async currentUserPermission({commit}, u) {
     let res = await this.$http.get("/system/currentUserPermission");
     commit('permission', res.result);
+    return Promise.resolve(res);
   },
   async getAlldict({commit}, u) {
     let res = await this.$http.get("/system/getAlldict");
     commit('dict', res.result);
+    return Promise.resolve(res);
   }
 }
 

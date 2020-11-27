@@ -56,12 +56,13 @@ export default {
   },
   proxy: {
     '/rjgf/api/': {
-      target: 'http://192.168.110.241:9122/',
+      //target: 'http://192.168.110.241:9122/',//测试
+      target: 'http://192.168.110.241:9006/',//开发
       //target: 'http://113.108.148.245:9594/',
       //target: 'http://192.168.110.240:9200/mock/122/',
-      ws: false,
       changeOrigin: true,
       secure: false,
+      xfwd:true,
       pathRewrite: {}
     }
   },
@@ -96,10 +97,7 @@ export default {
     }
   },
   router: {
-    middleware: ['auth'],
-    extendRoutes(routes, resolve) {
-      //routes.push()
-    }
+    middleware: ['auth']
   },
   server: {
     host: '0.0.0.0',

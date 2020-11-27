@@ -5,8 +5,12 @@ import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
 //工具插件  需要挂载在原型链等都在这里挂载
 
+
 import TablePage from '@/components/common/TablePage.vue'
+/*全局组件 */
 Vue.component('table-page', TablePage)
+
+
 
 /*vue 过滤器注册 */
 Vue.filter('NumberFormat', function(value) {
@@ -20,6 +24,8 @@ Vue.filter('NumberFormat', function(value) {
 Vue.filter('time', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dataStr).format(pattern)
 })
+
+
 
 /**
  * val 参数  是任意类型
@@ -117,6 +123,10 @@ export default (content, inject) => {
     fromReset,
     getChildComponent
   })
+  
+  /*全局指令 */
+
+  
   //字典
   inject('dict', getDictVal)
 }

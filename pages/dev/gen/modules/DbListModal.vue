@@ -147,7 +147,7 @@ export default {
     handleSubmit (e) {
       e.preventDefault()
       this.confirmLoading = true
-      this.$http.post('/generator/gen/importTable',{ tables: this.selectedRowKeys.join(',') }).then(res => {
+      this.$http.post('/generator/gen/importTable', this.selectedRowKeys,{headers: {tenantName:this.selectBase}}).then(res => {
         if (res.code === 200) {
           this.$message.success('保存成功')
           this.$emit('ok')

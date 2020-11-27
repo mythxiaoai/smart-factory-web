@@ -167,7 +167,7 @@ export default {
       this.$refs.dbmodal.show()
     },
     handleEdit (tableId) {
-      this.$router.push({ name: 'genEdit', query: { tableId: tableId } })
+      this.$router.push({ path: '/dev/gen/edit', query: { tableId: tableId } });
     },
     handlePreview (tableId) {
       this.$refs.premodal.show(tableId)
@@ -179,14 +179,14 @@ export default {
       this.handleGen(tables)
     },
     handleGen (tables) {
-      genCodeZip(this.$http.batchGenCode.get, tables.join(','))
+      genCodeZip('/generator/gen/batchGenCode', tables.join(','))
     },
     handleOk () {
       this.$refs.table.refresh(true)
     },
     delByIds (ids) {
-      this.$http.delete('/generator/gen/remov',{ ids: ids.join(',') }).then(res => {
-        if (res.code === 200) {
+      this.$http.post('/generator/gen/remove',ids).then(res => {
+        if (res.success) {
           this.$message.success(`删除成功`)
           this.handleOk()
         } else {

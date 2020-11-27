@@ -12,7 +12,7 @@ export default function(content) {
   //路由实例
   const router = content.app.router;
   const isLogin = !!Vue.ls.get('token');
-  let menu = Vue.ls.get('permission');
+  let permission = Vue.ls.get('permission');
 
   //白名单测试路由
   if(~whiteRoute.indexOf(route.path)||route.path.slice(0,6)===testPrefix){
@@ -22,8 +22,7 @@ export default function(content) {
 
   //是否登陆
   if(isLogin){
-    //过滤出是子节点的url
-    menu = menu.menu.filter(v=>v.leafFlag==1).map(v=>v.url);
+    let menu = permission.menu.map(v=>v.url);
     //是否授权
     if(~menu.indexOf(route.path)){
       content.next();

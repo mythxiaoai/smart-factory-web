@@ -45,7 +45,7 @@ export default {
     ...mapState('security', ['permission']),
     ...mapState('tab', ['tabs']),
     data() {
-      //根据key去全局数据中查找对应的菜单名。
+      //根据key去全局数据中查找对应的item。
       return this.tabs.map((v) => {
         return this.permission.menu.filter((p) => v === p.url)[0]
       })
@@ -104,7 +104,6 @@ export default {
       }
     },
     closeRight(){
-          
       //删除
       let tabs = [...this.tabs];
       let currIndex = tabs.indexOf(this.$route.path);
@@ -142,7 +141,18 @@ export default {
         //全局刷新
         this.$router.go(0);
       }
-      
+    },
+  },
+  watch: {
+    '$route.path': {
+      handler: function (oldVal,newVal) {
+        //如果当前没有就添加路由
+        if(oldVal==newVal)return;
+        if(this.tabs.includes(this.$route.path)==false){
+          this.$store.dispatch('tab/add', this.$route.path);
+        }
+      },
+      immediate:true,
     },
   },
 }

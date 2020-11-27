@@ -1,5 +1,6 @@
 <template>
   <a-layout class="container">
+    <!--菜单-->
     <a-layout-sider
       class="global-sider"
       :trigger="null"
@@ -12,7 +13,7 @@
       <a-menu
         theme="dark"
         mode="inline"
-        :selectedKeys="[$route.path]"
+        :selectedKeys="selectedKeys"
         :openKeys.sync="openKeys"
         @click="menuClick"
       >
@@ -125,15 +126,21 @@ export default {
     return {
       collapsed: false,
       openKeys: [],
+      selectedKeys: []
     }
   },
   created() {
-    console.log(this)
+    if(this.$route.path==="/")this.$router.push(HOMEPATH);
   },
   methods: {
-    menuClick: function (item) {
-      let { key } = item
-      this.$router.push(key)
+    menuClick: function ({key}) {
+      let item= this.$_.find(this.permission.menu,{url:key});
+      //是否外部打开
+      if(item.internalOrExternal===1){
+        window.open(key);
+      }else{
+        this.$router.push(key)
+      }
     },
     loginout() {
       this.$store.dispatch('security/loginout').then((v) => {
@@ -160,7 +167,12 @@ export default {
         if(oldVal==newVal)return;
         let menu = this.permission.menu
         let currItem = menu.filter((v) => v.url == this.$route.path)[0]
-        if (!currItem) return []
+        if (!currItem) return;
+        //如果不是主菜单
+        if(currItem.routeFlag == 0) return;
+        //选中
+        this.selectedKeys = [this.$route.path];
+        //打开菜单
         let res = []
         while (true) {
           currItem = menu.filter((v) => v.id == currItem.parentId)[0]
@@ -168,8 +180,7 @@ export default {
           if (currItem.parentId === null) break
         }
         this.openKeys = res;
-        //tab
-        this.$store.dispatch('tab/add', this.$route.path);
+
       },
       immediate:true,
     },

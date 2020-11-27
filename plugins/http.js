@@ -39,6 +39,7 @@ export default ({$axios}, inject) => {
 
   //全路径当做url匹配
   const api = proxyMethod(cb);
+  //方法匹配
   const http = new Proxy({},{
     get:(target,key)=>{
       if(!methods.includes(key)){

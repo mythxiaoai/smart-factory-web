@@ -15,9 +15,11 @@ export const mutations = {
     state.token = params
   },
   celar(state){
+    //登陆失效
     Vue.ls.remove('token');
-    Vue.ls.remove('tabs');
     state.token = '';
+    //tabs清空
+    this.dispatch('tab/init');
   },
   userInfo(state, params) {
     Vue.ls.set('userInfo', params, 7 * 24 * 60 * 60 * 1000)
@@ -67,12 +69,16 @@ export const getters = {
   },
   menu(state){
     if(!state.permission)return [];
-    let menu = convert(state.permission.menu);
-    console.log(state.permission);
+    //过滤出是主路由并且启用的
+    let menu = state.permission.menu.filter(v =>{
+      return v.routeFlag == 1 && v.status == 1;
+    })
+    //转化成树结构
+    menu = convert(menu);
     return menu;
   },
   button(state){
     if(!state.permission)return [];
-    
+    return state.permission.auth;
   },
 }

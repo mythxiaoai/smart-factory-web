@@ -13,7 +13,7 @@
           <a-icon type="delete" />
           <a-popconfirm
             title="确定删除吗?"
-            @confirm="() => handleDelete(text.id)"
+            @confirm="() => handleDelete(text.pollName)"
           >
             删除
           </a-popconfirm>
@@ -56,12 +56,12 @@ export default {
       this.$refs.modalForm.initForm()
     },
     handleUpdate(data) {
-      this.$refs.modalForm.visible = true
-      let result = JSON.parse(JSON.stringify(data))
-      this.$refs.modalForm.initForm(null, result)
+      // this.$refs.modalForm.visible = true
+      // let result = JSON.parse(JSON.stringify(data))
+      // this.$refs.modalForm.initForm(null, result)
     },
-    async handleDelete(id) {
-      await this.$http.delete('/generator/datasources',[id])
+    async handleDelete(name) {
+      await this.$http.delete('/generator/datasources',[name])
       this.list()
     },
     list() {

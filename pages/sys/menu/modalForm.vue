@@ -350,8 +350,8 @@ export default {
         this.confirmLoading = true
         //字典
         const http = this.form.id
-          ? this.$api.system.sys.permission.edit
-          : this.$api.system.sys.permission.add
+          ? this.$api.system.sys.permission.edit.put
+          : this.$api.system.sys.permission.add.post
         await http(this.form)
         this.confirmLoading = false
         this.close()

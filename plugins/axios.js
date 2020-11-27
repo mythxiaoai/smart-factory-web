@@ -101,17 +101,12 @@ function axiosFn(content, inject) {
   //错误
   $axios.onError((err) => {
     //["config", "request", "response", "isAxiosError", "toJSON"]
-    console.error(err)
     err = err.toJSON()
-    return errorPage({ statusCode: err.code, message: err.message }, err)
+    error({ statusCode: err.code, message: err.message })
+    return Promise.reject(err);
   })
 }
 
-//页面级错误
-function errorPage(errData, error) {
-  error(errData)
-  return Promise.reject(error)
-}
 //错误对话弹框
 function runNotification(obj) {
   notification[obj.type]({

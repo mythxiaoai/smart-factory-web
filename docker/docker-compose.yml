@@ -7,4 +7,4 @@ services:
     ports:
       - "10001:8080"
     environment:
-      API_PATH: 192.168.110.241:9000
+      API_PATH: 192.168.110.241:9001

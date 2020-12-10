@@ -118,7 +118,7 @@ import XTabs from '@/components/layouts/XTabs.vue'
 
 import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
 
-import { mapGetters, mapState } from 'Vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'home',

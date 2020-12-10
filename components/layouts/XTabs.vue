@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapState } from 'Vuex'
+import { mapState } from 'vuex'
 import { HOMEPATH, LONGINPATH } from '@/assets/config/appConfig.js'
 import contextmenu from './Contextmenu'
 

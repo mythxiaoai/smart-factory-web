@@ -16,7 +16,7 @@ fi
 
 echo "move dist to dockerfile dir"
 rm -rf ./dockerfile/dist
-mv ../dist ./dockerfile
+cp -r ../dist/ ./dockerfile/dist
 
 
 echo "step1 delete images and container"

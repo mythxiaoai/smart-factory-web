@@ -157,11 +157,12 @@ export default {
   watch: {
     '$route.path': {
       handler: function (oldVal, newVal) {
-        //如果当前没有就添加路由
         if (oldVal == newVal) return
+        //如果当前没有就添加路由  && 不是首页  && 在自己的权限内才给添加
         if (
           this.tabs.includes(this.$route.path) == false &&
-          this.$route.path != LONGINPATH
+          this.$route.path != LONGINPATH &&
+          this.permission.menu.filter((p) => this.$route.path === p.url)[0]
         ) {
           this.$store.dispatch('tab/add', this.$route.path)
         }

@@ -162,7 +162,7 @@ export default {
         //字典
         let res = this.form.id?
         "":
-        await this.$http.post('/generator/datasources/addDruid')
+        await this.$http.post('/generator/datasources/addDruid',this.form)
 
         this.confirmLoading = false
         if(res.success){

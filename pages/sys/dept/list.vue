@@ -90,6 +90,7 @@ export default {
   methods: {
     handleAdd() {
       this.$refs.modalForm.visible = true
+      this.$refs.modalForm.initForm({ menuList })
     },
     handleUpdate(data) {
       this.$refs.modalForm.visible = true

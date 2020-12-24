@@ -64,7 +64,10 @@
             prop="icon"
             v-show="form.menuType === 0"
           >
-            <a-input placeholder="请输入菜单图标" v-model="form.icon" />
+            <!-- <a-input placeholder="请输入菜单图标" v-model="form.icon" /> -->
+            <a-input placeholder="点击选择图标" v-model="form.icon">
+              <a-icon slot="addonAfter" type="setting" @click="selectIcons" />
+            </a-input>
           </a-form-model-item>
 
           <a-form-model-item
@@ -88,8 +91,8 @@
             prop="routeFlag"
           >
             <a-switch
-              @change="form.routeFlag = form.routeFlagShow ? 1 : 0"
-              v-model="form.routeFlagShow"
+              @change="form.routeFlag = routeFlagShow ? 1 : 0"
+              v-model="routeFlagShow"
               checked-children="是"
               un-checked-children="否"
             />
@@ -103,8 +106,8 @@
             prop="status"
           >
             <a-switch
-              @change="form.status = form.statusShow ? 1 : 0"
-              v-model="form.statusShow"
+              @change="form.status = statusShow ? 1 : 0"
+              v-model="statusShow"
               checked-children="是"
               un-checked-children="否"
             />
@@ -118,10 +121,8 @@
             prop="internalOrExternal"
           >
             <a-switch
-              @change="
-                form.internalOrExternal = form.internalOrExternalShow ? 0 : 1
-              "
-              v-model="form.internalOrExternalShow"
+              @change="form.internalOrExternal = internalOrExternalShow ? 0 : 1"
+              v-model="internalOrExternalShow"
               checked-children="内部"
               un-checked-children="外部"
             />
@@ -168,11 +169,18 @@
           </a-form-model-item>
         </div>
       </a-form-model>
+      <!-- 选择图标 -->
+      <icons
+        @choose="handleIconChoose"
+        @close="handleIconCancel"
+        :iconChooseVisible="iconChooseVisible"
+      ></icons>
     </a-spin>
   </a-modal>
 </template>
 
 <script>
+import Icons from './icon/Icons'
 let Oform = {
   menuType: 0,
   parentId: null,
@@ -181,12 +189,9 @@ let Oform = {
   icon: null,
   sortNo: 1,
   routeFlag: 1,
-  routeFlagShow: true,
   //是否内部打开 0 内部  1外部
   internalOrExternal: 0,
-  internalOrExternalShow: true,
   status: 1,
-  statusShow: true,
   perms: '',
   ruleFlag: 0,
   leafFlag: null,
@@ -194,13 +199,14 @@ let Oform = {
 }
 export default {
   name: 'modalForm',
+  components: {Icons},
   data() {
     let unique1 = async (rule, value, callback) => {
-      if(!this.form.parentId){
-        callback(new Error('请先选择上级菜单~'));
-        return;
+      if (!this.form.parentId) {
+        callback(new Error('请先选择上级菜单~'))
+        return
       }
-      
+
       //parentPermissionId perName permissionId
       let res = await this.$api.system.sys.permission.checkSubName.get({
         parentPermissionId: this.form.parentId,
@@ -223,8 +229,8 @@ export default {
         sm: { span: 16 },
       },
       confirmLoading: false,
-      selectList:{
-        menuList:[]
+      selectList: {
+        menuList: [],
       },
       form: {
         menuType: 0,
@@ -235,22 +241,22 @@ export default {
         sortNo: 1,
         perms: '',
         routeFlag: 1,
-        routeFlagShow: true,
         //是否内部打开 0 内部  1外部
         internalOrExternal: 0,
-        internalOrExternalShow: true,
         status: 1,
-        statusShow: true,
         ruleFlag: 0,
         leafFlag: null,
         description: null,
       },
-
+      statusShow: true,
+      internalOrExternalShow: true,
+      routeFlagShow: true,
       multiterm: {
         label: ['键', '值', '排序'],
         visible: [false, false],
         showKey: ['itemText', 'itemValue', 'sortOrder'],
       },
+      iconChooseVisible: false,
     }
   },
   created() {},
@@ -258,7 +264,7 @@ export default {
     rules() {
       //一级菜单
       let result = {
-        name: [{ required: true, message: '不能为空~', trigger: 'blur' }]
+        name: [{ required: true, message: '不能为空~', trigger: 'blur' }],
       }
       //子菜单
       if (this.form.menuType == 1) {
@@ -273,7 +279,9 @@ export default {
             { required: true, message: '不能为空~', trigger: 'blur' },
             { validator: this.unique1, trigger: 'blur' },
           ],
-          parentId: [{ required: true, message: '不能为空~', trigger: 'change' }],
+          parentId: [
+            { required: true, message: '不能为空~', trigger: 'change' },
+          ],
         }
       }
       return result
@@ -297,18 +305,18 @@ export default {
     },
   },
   methods: {
-    initForm(data,parmas) {
+    initForm(data, parmas) {
       //回显赋值
       if (this.form.id) {
-        this.form.routeFlagShow = this.form.routeFlag ? true : false
-        this.form.statusShow = this.form.status ? true : false
-        this.form.internalOrExternalShow = this.form.internalOrExternal
+        this.routeFlagShow = this.form.routeFlag ? true : false
+        this.statusShow = this.form.status ? true : false
+        this.internalOrExternalShow = this.form.internalOrExternal
           ? false
           : true
       }
       //上级菜单的下拉
-      this.selectList = data;
-      parmas && Object.assign(this.form,parmas);
+      this.selectList = data
+      parmas && Object.assign(this.form, parmas)
     },
     add() {
       this.edit({})
@@ -356,16 +364,25 @@ export default {
         this.confirmLoading = false
         this.close()
         this.$emit('refresh')
-
       })
     },
     handleCancel() {
       this.close()
+    },
+    selectIcons() {
+      this.iconChooseVisible = true
+    },
+    handleIconCancel() {
+      this.iconChooseVisible = false
+    },
+    handleIconChoose(value) {
+      console.log(value)
+      this.form.icon = value
+      this.iconChooseVisible = false
     },
   },
 }
 </script>
 
 <style scoped lang="less">
-
 </style>

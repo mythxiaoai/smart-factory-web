@@ -72,6 +72,24 @@
         </a-form-model-item>
 
         <a-form-model-item
+          label="部门分配"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+          hasFeedback
+          prop="departIdList"
+        >
+          <a-tree-select
+            v-model="form.departIdList"
+            :tree-data="depList"
+            placeholder="请选择部门"
+            multiple
+            tree-checkable
+            :replaceFields="{ title: 'departName', value: 'id', key: 'id' }"
+          >
+          </a-tree-select>
+        </a-form-model-item>
+
+        <a-form-model-item
           label="角色"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
@@ -100,7 +118,11 @@
           hasFeedback
           prop="birthday"
         >
-          <a-date-picker placeholder="请输入生日" v-model="form.birthday" valueFormat="YYYY-MM-DD" />
+          <a-date-picker
+            placeholder="请输入生日"
+            v-model="form.birthday"
+            valueFormat="YYYY-MM-DD"
+          />
         </a-form-model-item>
 
         <a-form-model-item
@@ -149,6 +171,7 @@ let Oform = {
   realname: '',
   workNo: '',
   roleIds: [],
+  departIdList: [],
   birthday: '',
   sex: 1, //1 男 2女
   email: '',
@@ -200,6 +223,7 @@ export default {
         realname: '',
         workNo: '',
         roleIds: [],
+        departIdList: [],
         birthday: '',
         sex: 1, //1 男 2女
         email: '',
@@ -207,6 +231,7 @@ export default {
         status: 1,
       },
       roleList: [],
+      depList: [],
     }
   },
   created() {},
@@ -230,7 +255,8 @@ export default {
           { validator: this.unique2, trigger: 'blur' },
         ],
         realname: [{ required: true, message: '不能为空~', trigger: 'blur' }],
-        workNo: [{ required: true, message: '不能为空~', trigger: 'blur' },
+        workNo: [
+          { required: true, message: '不能为空~', trigger: 'blur' },
           { validator: this.unique3, trigger: 'blur' },
         ],
         email: [{ type: 'email', message: '邮箱不合法~', trigger: 'blur' }],
@@ -255,7 +281,18 @@ export default {
       this.$api.system.sys.role.queryall.get().then((res) => {
         this.roleList = res.result
       })
-      parmas && Object.assign(this.form, parmas)
+      this.$api.system.sys.depart.queryTreeList.get().then((res) => {
+        this.depList = res.result
+      })
+      // parmas && Object.assign(this.form, parmas)
+      parmas &&
+        this.$http
+          .get(`/system/sys/user/queryById/${parmas.id}`)
+          .then((res) => {
+            res.result.departIdList = res.result.departList?.split(',')
+            this.form = res.result;
+            this.form.roleIds = res.result.roleIds?.split(',')
+          })
     },
     close() {
       this.visible = false

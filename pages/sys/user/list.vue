@@ -32,17 +32,17 @@
             </a-menu-item>
 
             <a-menu-item>
-              <a href="javascript:;" @click="handlePassword(text)">修改密码</a>
+              <a href="javascript:;" @click="handlePassword(text)">重置密码</a>
             </a-menu-item>
 
-            <a-menu-item>
+            <!-- <a-menu-item>
               <a-popconfirm
                 title="确定重置密码为'123456'吗?"
                 @confirm="() => handleResetPassword(text.username)"
               >
                 <a>重置密码</a>
               </a-popconfirm>
-            </a-menu-item>
+            </a-menu-item> -->
 
             <a-menu-item>
               <a-popconfirm
@@ -165,14 +165,14 @@ export default {
     }
   },
   methods: {
-    async handleResetPassword(username){
-      let res = await this.$api.system.sys.user.resetPassword.put({
-        username,
-        newPassword:"123456",
-      })
-      res.success && this.$message.success("重置成功~")
-      this.list()
-    },
+    // async handleResetPassword(username){
+    //   let res = await this.$api.system.sys.user.resetPassword.put({
+    //     username,
+    //     newPassword:"123456",
+    //   })
+    //   res.success && this.$message.success("重置成功~")
+    //   this.list()
+    // },
     async handleFreeze(id) {
       await this.$api.system.sys.user.frozenBatch.put({
         status: 2,

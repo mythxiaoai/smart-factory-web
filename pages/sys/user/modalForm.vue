@@ -186,14 +186,14 @@ export default {
         userId: this.form.id,
         username: value,
       })
-      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+      !res.result ? callback() : callback(new Error(res.message))
     }
     let unique3 = async (rule, value, callback) => {
       let res = await this.$api.system.sys.user.checkWorkNo.get({
         userId: this.form.id,
         workNo: value,
       })
-      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+      !res.result ? callback() : callback(new Error(res.message))
     }
     let unique2 = (rule, value, callback) => {
       value == this.form.password

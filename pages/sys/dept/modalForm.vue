@@ -144,7 +144,7 @@ export default {
         departId: this.form.id,
         departName: value,
       })
-      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+      !res.result ? callback() : callback(new Error(res.message))
     }
     return {
       unique1,

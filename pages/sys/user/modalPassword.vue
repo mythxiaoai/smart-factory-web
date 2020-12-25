@@ -31,14 +31,14 @@
           prop="password"
         >
           <a-input
-            type="password"
+            type="text"
             autocomplete="false"
             placeholder="请输入登陆密码"
             v-model="form.password"
           />
         </a-form-model-item>
 
-        <a-form-model-item
+        <!-- <a-form-model-item
           label="确认密码"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
@@ -51,7 +51,7 @@
             placeholder="请输入确认密码"
             v-model="form.rePassword"
           />
-        </a-form-model-item>
+        </a-form-model-item> -->
       </a-form-model>
     </a-spin>
   </a-modal>
@@ -60,7 +60,7 @@
 <script>
 let Oform = {
   username: '',
-  password: '',
+  password: 'a123456',
   rePassword: '',
 }
 export default {
@@ -73,7 +73,7 @@ export default {
     }
     return {
       unique2,
-      title: '修改密码',
+      title: '重置密码',
       visible: false,
       labelCol: {
         xs: { span: 24 },
@@ -86,7 +86,7 @@ export default {
       confirmLoading: false,
       form: {
         username: '',
-        password: '',
+        password: 'a123456',
         rePassword: '',
       },
       roleList: [],
@@ -128,8 +128,8 @@ export default {
       this.$refs.formModel.validate(async (valid) => {
         if (!valid) return
         this.confirmLoading = true
-        let res = await this.$http.put("/system/sys/user/resetPassword",{
-          newPassword: this.form.rePassword,
+        let res = await this.$http.put('/system/sys/user/resetPassword', {
+          newPassword: this.form.password,
           username: this.form.username,
         })
 

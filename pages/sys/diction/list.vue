@@ -32,7 +32,7 @@
       
     </table-page>
     <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
-    <modal-form ref="modalForm" @refresh="list"></modal-form>
+    <modal-form ref="modalForm" :title="title" @refresh="list"></modal-form>
   </a-card>
 </template>
 
@@ -92,14 +92,17 @@ export default {
         { title: '键', dataIndex: 'itemText', key: 'itemText' },
         { title: '值', dataIndex: 'itemValue', key: 'itemValue' },
       ],
+      title:'操作'
     }
   },
   methods: {
     handleAdd() {
+      this.title = '添加字典'
       this.$refs.modalForm.visible = true
     },
     handleUpdate(data) {
       console.log(data)
+      this.title = '修改字典'
       this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       //添加一个标记值

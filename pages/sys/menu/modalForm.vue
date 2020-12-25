@@ -199,6 +199,7 @@ let Oform = {
 }
 export default {
   name: 'modalForm',
+  props:['title'],
   components: {Icons},
   data() {
     let unique1 = async (rule, value, callback) => {
@@ -217,7 +218,6 @@ export default {
     }
     return {
       unique1,
-      title: '操作',
       visible: false,
       model: {},
       labelCol: {

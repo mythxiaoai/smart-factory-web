@@ -38,7 +38,7 @@
           </span>
         </table-page>
         <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
-        <modal-form ref="modalForm" @refresh="list"></modal-form>
+        <modal-form ref="modalForm" :title="title" @refresh="list"></modal-form>
         <right-modal ref="rightModal"></right-modal>
       </a-card>
     </a-col>
@@ -61,6 +61,7 @@ export default {
   mounted() {},
   data: function () {
     return {
+      title:'操作',
       showUser: false,
       tablePageConfig: {
         getAsyncDate: null,
@@ -83,9 +84,11 @@ export default {
   },
   methods: {
     handleAdd() {
+      this.title = '添加角色'
       this.$refs.modalForm.visible = true
     },
     handleUpdate(data) {
+      this.title = '修改角色'
       this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       this.$refs.modalForm.form = result

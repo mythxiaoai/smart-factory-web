@@ -138,6 +138,7 @@ let Oform = {
 }
 export default {
   name: 'modalForm',
+  props:['title'],
   data() {
     let unique1 = async (rule, value, callback) => {
       let res = await this.$api.system.sys.depart.checkDepartName.get({
@@ -148,7 +149,6 @@ export default {
     }
     return {
       unique1,
-      title: '操作',
       visible: false,
       model: {},
       labelCol: {

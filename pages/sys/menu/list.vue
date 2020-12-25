@@ -37,7 +37,7 @@
         </a-dropdown>
       </span>
     </table-page>
-    <modal-form ref="modalForm" @refresh="list"></modal-form>
+    <modal-form ref="modalForm" :title="title" @refresh="list"></modal-form>
   </a-card>
 </template>
 
@@ -85,22 +85,26 @@ export default {
         { title: '键', dataIndex: 'itemText', key: 'itemText' },
         { title: '值', dataIndex: 'itemValue', key: 'itemValue' },
       ],
+      title:'操作'
     }
   },
   methods: {
     handleGlobData() {},
     handlePermissionData() {},
     handleAdd() {
+      this.title = '添加菜单'
       this.$refs.modalForm.visible = true
       //初始化下拉
       this.$refs.modalForm.initForm({ menuList })
     },
     handleNextAdd(id) {
+      this.title = '添加菜单'
       this.$refs.modalForm.visible = true
       //初始化下拉
       this.$refs.modalForm.initForm({ menuList }, { menuType: 1, parentId: id })
     },
     handleUpdate(data) {
+      this.title = '修改菜单'
       this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       this.$refs.modalForm.form = result

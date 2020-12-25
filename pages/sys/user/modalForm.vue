@@ -291,6 +291,7 @@ export default {
       })
       // parmas && Object.assign(this.form, parmas)
       this.disabled = false
+      this.title = '添加用户'
       parmas &&
         this.$http
           .get(`/system/sys/user/queryById/${parmas.id}`)
@@ -298,7 +299,9 @@ export default {
             res.result.departIdList = res.result.departList?.split(',')
             this.form = res.result
             this.form.roleIds = res.result.roleIds?.split(',')
+            this.visible = true
             this.disabled = true
+             this.title = '修改用户'
           })
     },
     close() {

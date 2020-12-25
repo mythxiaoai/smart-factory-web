@@ -47,6 +47,7 @@
 <script>
 export default {
   name: 'modalForm',
+  props:['title'],
   data() {
     let unique1 = async (rule, value, callback) => {
       let res = await this.$http.get("/system/sys/role/checkRoleCode",{
@@ -56,7 +57,7 @@ export default {
       !res.result ? callback() : callback(new Error('需要保证值唯一'))
     }
     return {
-      title: '操作',
+      //title: '操作',
       visible: false,
       labelCol: {
         xs: { span: 24 },

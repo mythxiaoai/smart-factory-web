@@ -37,7 +37,7 @@
             </a-dropdown>
           </span>
         </table-page>
-        <modal-form ref="modalForm" @refresh="list"></modal-form>
+        <modal-form ref="modalForm" :title="title" @refresh="list"></modal-form>
         <!-- <right-modal ref="rightModal"></right-modal> -->
       </a-card>
     </a-col>
@@ -85,14 +85,17 @@ export default {
         pagination: false,
       },
       orgCategory: { 1: '组织机构', 2: '岗位' },
+      title:'操作'
     }
   },
   methods: {
     handleAdd() {
+      this.title = '添加部门'
       this.$refs.modalForm.visible = true
       this.$refs.modalForm.initForm({ menuList })
     },
     handleUpdate(data) {
+      this.title = '修改部门'
       this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       result.menuType = 0
@@ -101,6 +104,7 @@ export default {
       this.$refs.modalForm.initForm({ menuList })
     },
     handleNextAdd(id) {
+      this.title = '添加部门'
       this.$refs.modalForm.visible = true
       //初始化下拉
       this.$refs.modalForm.initForm({ menuList }, { menuType: 1, parentId: id })

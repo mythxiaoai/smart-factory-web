@@ -197,7 +197,7 @@ export default {
       this.$refs.modalPassword.initForm(null,result)
     },
     handleUpdate(data) {
-      this.$refs.modalForm.visible = true
+      //this.$refs.modalForm.visible = true
       let result = JSON.parse(JSON.stringify(data))
       this.$refs.modalForm.initForm(null, result)
     },

@@ -159,6 +159,7 @@ let Oform = {
 }
 export default {
   name: 'modalForm',
+  props:['title'],
   data() {
     let unique1 = async (rule, value, callback) => {
       let res = await this.$http.get('/system/sys/dict/checkDictCode',{
@@ -202,7 +203,6 @@ export default {
     return {
       unique2,
       unique3,
-      title: '操作',
       visible: false,
       model: {},
       labelCol: {

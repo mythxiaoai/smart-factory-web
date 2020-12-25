@@ -76,7 +76,7 @@
                 size="small"
                 src="https://preview.pro.loacg.com/avatar2.jpg"
               />
-              <span>欢迎您，admin</span>
+              <span>欢迎您，{{userInfo.realname}}</span>
             </span>
             <a-menu slot="overlay">
               <a-menu-item key="0">
@@ -158,7 +158,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('security', ['permission']),
+    ...mapState('security', ['permission','userInfo']),
     ...mapGetters('security', ['menu']),
   },
   components: {

@@ -202,7 +202,7 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.system.sys.deleteBatch.delete([id])
+      await this.$api.system.sys.user.deleteBatch.delete([id])
       this.list()
     },
     list() {

@@ -17,7 +17,11 @@
           hasFeedback
           prop="username"
         >
-          <a-input placeholder="请输入登陆账户" v-model="form.username" />
+          <a-input
+            placeholder="请输入登陆账户"
+            :disabled="disabled"
+            v-model="form.username"
+          />
         </a-form-model-item>
         <div v-show="!form.id">
           <a-form-model-item
@@ -232,6 +236,7 @@ export default {
       },
       roleList: [],
       depList: [],
+      disabled: false,
     }
   },
   created() {},
@@ -285,13 +290,15 @@ export default {
         this.depList = res.result
       })
       // parmas && Object.assign(this.form, parmas)
+      this.disabled = false
       parmas &&
         this.$http
           .get(`/system/sys/user/queryById/${parmas.id}`)
           .then((res) => {
             res.result.departIdList = res.result.departList?.split(',')
-            this.form = res.result;
+            this.form = res.result
             this.form.roleIds = res.result.roleIds?.split(',')
+            this.disabled = true
           })
     },
     close() {

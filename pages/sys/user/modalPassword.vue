@@ -20,6 +20,7 @@
           <a-input
             placeholder="请输入登陆账户"
             v-model="form.username"
+            disabled
             read-only
           />
         </a-form-model-item>

@@ -93,7 +93,7 @@
               </a-menu-item>
               <a-menu-item key="4">
                 <a-icon type="setting" />
-                <span>密码修改</span>
+                <span @click="handlePassword">密码修改</span>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -105,6 +105,7 @@
       <div class="home_tab">
         <x-tabs></x-tabs>
       </div>
+      <modal-password ref="modalPassword"></modal-password>
       <a-layout-content class="global-content">
         <nuxt />
       </a-layout-content>
@@ -115,6 +116,7 @@
 import SystemInfo from '@/components/layouts/SystemInfo.vue'
 import SiderMenu from '@/components/layouts/SiderMenu.vue'
 import XTabs from '@/components/layouts/XTabs.vue'
+import modalPassword from './modules/modalPassword.vue'
 
 import { LONGINPATH, HOMEPATH } from '@/assets/config/appConfig.js'
 
@@ -126,19 +128,22 @@ export default {
     return {
       collapsed: false,
       openKeys: [],
-      selectedKeys: []
+      selectedKeys: [],
     }
   },
   created() {
-    if(this.$route.path==="/")this.$router.push(HOMEPATH);
+    if (this.$route.path === '/') this.$router.push(HOMEPATH)
   },
   methods: {
-    menuClick: function ({key}) {
-      let item= this.$_.find(this.permission.menu,{url:key});
+    handlePassword() {
+      this.$refs.modalPassword.visible = true
+    },
+    menuClick: function ({ key }) {
+      let item = this.$_.find(this.permission.menu, { url: key })
       //是否外部打开
-      if(item.internalOrExternal===1){
-        window.open(key);
-      }else{
+      if (item.internalOrExternal === 1) {
+        window.open(key)
+      } else {
         this.$router.push(key)
       }
     },
@@ -160,18 +165,19 @@ export default {
     SiderMenu,
     SystemInfo,
     XTabs,
+    modalPassword,
   },
   watch: {
     '$route.path': {
-      handler: function (oldVal,newVal) {
-        if(oldVal==newVal)return;
+      handler: function (oldVal, newVal) {
+        if (oldVal == newVal) return
         let menu = this.permission.menu
         let currItem = menu.filter((v) => v.url == this.$route.path)[0]
-        if (!currItem) return;
+        if (!currItem) return
         //如果不是主菜单
-        if(currItem.routeFlag == 0) return;
+        if (currItem.routeFlag == 0) return
         //选中
-        this.selectedKeys = [this.$route.path];
+        this.selectedKeys = [this.$route.path]
         //打开菜单
         let res = []
         while (true) {
@@ -179,10 +185,9 @@ export default {
           currItem && res.push(currItem.url)
           if (currItem.parentId === null) break
         }
-        this.openKeys = res;
-
+        this.openKeys = res
       },
-      immediate:true,
+      immediate: true,
     },
   },
 }

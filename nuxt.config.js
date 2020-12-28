@@ -1,5 +1,5 @@
 export default {
-  mode: 'spa',
+  ssr:false,
   /*
    ** Headers of the page
    */
@@ -25,7 +25,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['ant-design-vue/dist/antd.css', './assets/less/index.less'],
+  css: ['ant-design-vue/dist/antd.css', './assets/less/index.less','./assets/less/ant.less'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -57,7 +57,7 @@ export default {
   proxy: {
     '/rjgf/api/': {
       //target: 'http://192.168.110.241:9122/',//测试
-      target: 'http://192.168.110.241:9006/',//开发
+      target: 'http://192.168.110.241:9001/',//开发
       //target: 'http://113.108.148.245:9594/',
       //target: 'http://192.168.110.240:9200/mock/122/',
       changeOrigin: true,

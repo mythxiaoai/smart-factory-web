@@ -127,6 +127,6 @@ export default (content, inject) => {
   /*全局指令 */
 
   
-  //字典
+  //字典 $dict("fsdfds")
   inject('dict', getDictVal)
 }

@@ -35,7 +35,7 @@
         >
           <a-input placeholder="请输入驱动类" v-model="form.driverClassName" />
         </a-form-model-item>
-        
+
         <a-form-model-item
           label="数据库名称"
           :label-col="labelCol"
@@ -44,6 +44,23 @@
           prop="pollName"
         >
           <a-input placeholder="请输入数据库名称" v-model="form.pollName" />
+        </a-form-model-item>
+
+        <a-form-model-item
+          label="数据库类型"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+          hasFeedback
+          prop="dbType"
+        >
+          <a-select v-model="form.dbType" placeholder="请选择数据库类型">
+            <a-select-option
+              v-for="item in dbTypeList"
+              :key="item.value"
+              :value="item.value"
+              >{{ item.text }}</a-select-option
+            >
+          </a-select>
         </a-form-model-item>
 
         <a-form-model-item
@@ -99,6 +116,7 @@ let Oform = {
   username: '', //用户名
   password: '', //密码
   remark: '', //备注
+  dbType: '', //数据库类型
 }
 export default {
   name: 'modalForm',
@@ -124,11 +142,15 @@ export default {
         username: '', //用户名
         password: '', //密码
         remark: '', //备注
+        dbType: '', //数据库类型
       },
+      dbTypeList: this.$dict('dbType'),
       roleList: [],
     }
   },
-  created() {},
+  created() {
+    console.log(this.$dict('dbType'))
+  },
   computed: {
     rules() {
       let result = {
@@ -139,6 +161,7 @@ export default {
         pollName: [{ required: true, message: '不能为空~', trigger: 'blur' }],
         username: [{ required: true, message: '不能为空~', trigger: 'blur' }],
         password: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+        dbType: [{ required: true, message: '不能为空~', trigger: 'blur' }],
       }
       return result
     },
@@ -160,17 +183,17 @@ export default {
         if (!valid) return
         this.confirmLoading = true
         //字典
-        let res = this.form.id?
-        "":
-        await this.$http.post('/generator/datasources/addDruid',this.form)
+        let res = this.form.id
+          ? ''
+          : await this.$http.post('/generator/datasources/addDruid', this.form)
 
         this.confirmLoading = false
-        if(res.success){
+        if (res.success) {
           this.close()
           this.$emit('refresh')
         }
       })
-    }
+    },
   },
 }
 </script>

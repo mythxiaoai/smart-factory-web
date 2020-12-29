@@ -3,13 +3,14 @@
     <table-page v-bind="tablePageConfig">
       <template #table-operator>
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
+        <a-button @click="handleRefresh" type="primary">更新字典</a-button>
       </template>
 
-      <template #status = "val">
-        {{val==null?"":val?"启用":"停用"}}
+      <template #status="val">
+        {{ val == null ? '' : val ? '启用' : '停用' }}
       </template>
 
-      <span slot="operation" slot-scope="{text}">
+      <span slot="operation" slot-scope="{ text }">
         <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
         <a-divider type="vertical" />
         <a-popconfirm
@@ -22,14 +23,12 @@
 
       <a-table
         slot="expandedRowRender"
-        slot-scope="{text}"
+        slot-scope="{ text }"
         :columns="innerColumns"
         :dataSource="text.dictItemList"
         :pagination="false"
       >
       </a-table>
-
-      
     </table-page>
     <!-- <dict-modal ref="modalForm" @ok="modalFormOk"></dict-modal> -->
     <modal-form ref="modalForm" :title="title" @refresh="list"></modal-form>
@@ -92,7 +91,7 @@ export default {
         { title: '键', dataIndex: 'itemText', key: 'itemText' },
         { title: '值', dataIndex: 'itemValue', key: 'itemValue' },
       ],
-      title:'操作'
+      title: '操作',
     }
   },
   methods: {
@@ -115,13 +114,16 @@ export default {
       await this.$http.sys.diction.del([id])
       this.list()
       //刷新全局字典表
-      this.$store.dispatch('security/getAlldict');
+      this.$store.dispatch('security/getAlldict')
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$http.get('/system/sys/dict/list',params)
+        let { result } = await this.$http.get('/system/sys/dict/list', params)
         next(result.records, result.total)
       }
+    },
+    handleRefresh() {
+      this.$api.system.sys.dict.refresh.cache.put()
     },
   },
   computed: {},

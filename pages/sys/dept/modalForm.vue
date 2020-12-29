@@ -204,7 +204,7 @@ export default {
           {
             required: true,
             pattern: /^[0-9]*$/,
-            message: '不能为空~',
+            message: '请输入正确的排序号~',
             trigger: 'blur',
           },
         ],

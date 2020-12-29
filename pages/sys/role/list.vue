@@ -43,7 +43,7 @@
       </a-card>
     </a-col>
     <a-col v-show="showUser" :md="12" :sm="24">
-      <user ref="user" @hide="showUser=false"> </user>
+      <user ref="user" @hide="showUser = false"> </user>
     </a-col>
   </a-row>
 </template>
@@ -61,9 +61,21 @@ export default {
   mounted() {},
   data: function () {
     return {
-      title:'操作',
+      title: '操作',
       showUser: false,
       tablePageConfig: {
+        formItem: [
+          {
+            component: 'a-input',
+            options: {
+              label: '角色名称',
+              prop: 'roleName',
+            },
+            attrs: {
+              placeholder: '角色名称',
+            },
+          },
+        ],
         getAsyncDate: null,
         columns: [
           { title: '角色编号', dataIndex: 'roleCode', key: 'roleCode' },
@@ -94,9 +106,9 @@ export default {
       this.$refs.modalForm.form = result
     },
     handleUserConfig(id) {
-      this.showUser = true;
-      this.$refs.user.tablePageConfig.setHTTParams.roleId = id;
-      this.$refs.user.list();
+      this.showUser = true
+      this.$refs.user.tablePageConfig.setHTTParams.roleId = id
+      this.$refs.user.list()
     },
     handlePermissionConfig(id) {
       this.$refs.rightModal.show(id)
@@ -105,13 +117,13 @@ export default {
       await this.$api.system.sys.role.deleteBatch.delete([id])
       this.list()
       //刷新全局菜单
-      this.$store.dispatch('security/currentUserPermission');
+      this.$store.dispatch('security/currentUserPermission')
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
         let { result } = await this.$api.system.sys.role.list.get(params)
         next(result.records, result.total)
-      };
+      }
     },
   },
   computed: {},

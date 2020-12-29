@@ -17,7 +17,11 @@
           hasFeedback
           prop="roleCode"
         >
-          <a-input placeholder="请输入角色编码" v-model="form.roleCode" />
+          <a-input
+            placeholder="请输入角色编码"
+            v-model="form.roleCode"
+            :disabled="title === '添加角色' ? false : true"
+          />
         </a-form-model-item>
 
         <a-form-model-item
@@ -47,10 +51,10 @@
 <script>
 export default {
   name: 'modalForm',
-  props:['title'],
+  props: ['title'],
   data() {
     let unique1 = async (rule, value, callback) => {
-      let res = await this.$http.get("/system/sys/role/checkRoleCode",{
+      let res = await this.$http.get('/system/sys/role/checkRoleCode', {
         roleId: this.form.id,
         roleCode: value,
       })
@@ -77,7 +81,7 @@ export default {
       rules: {
         roleCode: [
           { required: true, message: '不能为空~', trigger: 'blur' },
-          { validator:unique1, trigger: 'blur' },
+          { validator: unique1, trigger: 'blur' },
         ],
         roleName: [{ required: true, message: '不能为空~', trigger: 'blur' }],
       },
@@ -145,5 +149,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-
 </style>

@@ -40,7 +40,7 @@ export default {
   data: function () {
     return {
       visible: false,
-      title: '操作',
+      title: '绑定已有用户',
       selectedRowKeys: [],
       tablePageConfig: {
         formItem: [

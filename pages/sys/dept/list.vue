@@ -46,7 +46,7 @@
           @change="change"
           :customRow="customRow"
         >
-          <span slot="operation" slot-scope="text, record">
+          <span slot="operation" slot-scope="text, record" @click.stop="">
             <a @click="handleUserConfig(record.id)">用户信息</a>
             <a-divider type="vertical" />
             <a @click="handleUpdate(record)">编辑 </a>
@@ -126,6 +126,7 @@ export default {
       rowId: '',
       tableLoading: false,
       current: 1,
+      delId: '',
     }
   },
   methods: {
@@ -147,7 +148,6 @@ export default {
     },
     rowSetClass(record, index) {
       return record.id === this.rowId ? 'clickRowStyl' : ''
-      // console.log(record, index)
     },
     orgCategoryFmt(val) {
       return this.orgCategory[val]
@@ -183,6 +183,7 @@ export default {
     },
     async handleDelete(id) {
       await this.$api.system.sys.depart.deleteBatch.delete([id])
+      this.delId = id
       this.list()
     },
     reset() {
@@ -206,6 +207,9 @@ export default {
       this.tableData = result
       //做接收 表格弹框下拉用
       menuList = JSON.parse(JSON.stringify(result))
+      this.delId === this.rowId &&
+        this.showUser &&
+        this.handleUserConfig(this.tableData[0].id)
     },
   },
   computed: {},

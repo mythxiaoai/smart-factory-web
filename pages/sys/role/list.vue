@@ -2,14 +2,18 @@
   <a-row :gutter="10">
     <a-col :md="showUser ? 12 : 24" :sm="24">
       <a-card :bordered="false" :md="12">
-        <table-page v-bind="tablePageConfig">
+        <table-page
+          v-bind="tablePageConfig"
+          :customRow="customRow"
+          :rowClassName="rowSetClass"
+        >
           <template #table-operator>
             <a-button @click="handleAdd" type="primary" icon="plus"
               >添加</a-button
             >
           </template>
 
-          <span slot="operation" slot-scope="{ text }">
+          <span slot="operation" slot-scope="{ text }" @click.stop="">
             <a href="javascript:;" @click="handleUserConfig(text.id)">
               <a-icon type="user-add" /> 授权用户</a
             >
@@ -92,9 +96,27 @@ export default {
         { title: '键', dataIndex: 'itemText', key: 'itemText' },
         { title: '值', dataIndex: 'itemValue', key: 'itemValue' },
       ],
+      rowId: '',
+      delId: '',
     }
   },
   methods: {
+    customRow(record, index) {
+      return {
+        on: {
+          click: (event) => {
+            this.showUser && this.handleUserConfig(record.id)
+          },
+        },
+      }
+    },
+    rowSetClass(record, index) {
+      return record.id === this.rowId ? 'clickRowStyl' : ''
+    },
+    rightClose() {
+      this.showUser = false
+      this.rowId = ''
+    },
     handleAdd() {
       this.title = '添加角色'
       this.$refs.modalForm.visible = true
@@ -107,6 +129,7 @@ export default {
     },
     handleUserConfig(id) {
       this.showUser = true
+      this.rowId = id
       this.$refs.user.tablePageConfig.setHTTParams.roleId = id
       this.$refs.user.list()
     },
@@ -115,6 +138,7 @@ export default {
     },
     async handleDelete(id) {
       await this.$api.system.sys.role.deleteBatch.delete([id])
+      this.delId = id
       this.list()
       //刷新全局菜单
       this.$store.dispatch('security/currentUserPermission')
@@ -122,6 +146,9 @@ export default {
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
         let { result } = await this.$api.system.sys.role.list.get(params)
+        this.delId === this.rowId &&
+          this.showUser &&
+          this.handleUserConfig(result.records[0].id)
         next(result.records, result.total)
       }
     },
@@ -140,5 +167,8 @@ export default {
 <style>
 .global-content {
   background-color: transparent !important;
+}
+.clickRowStyl {
+  background-color: #e6f7ff;
 }
 </style>

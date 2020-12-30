@@ -132,8 +132,8 @@ export default {
     },
     handleBindUser() {
         this.$refs.modalTable.visible = true;
-        this.$refs.modalTable.tablePageConfig.setHTTParams.roleId = this.tablePageConfig.setHTTParams.roleId,
-        this.$refs.modalTable.list();
+        this.$refs.modalTable.tablePageConfig.setHTTParams.roleId = this.tablePageConfig.setHTTParams.roleId;
+        //this.$refs.modalTable.list();
     },
   },
   computed: {},

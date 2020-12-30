@@ -132,8 +132,8 @@ export default {
     },
     handleBindUser() {
         this.$refs.modalTable.visible = true;
-        this.$refs.modalTable.tablePageConfig.setHTTParams.clientId = this.tablePageConfig.setHTTParams.clientId,
-        this.$refs.modalTable.list();
+        this.$refs.modalTable.tablePageConfig.setHTTParams.clientId = this.tablePageConfig.setHTTParams.clientId;
+        //this.$refs.modalTable.list();
     },
   },
   computed: {},

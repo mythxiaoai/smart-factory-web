@@ -39,11 +39,11 @@ export default {
   mounted() {},
   data: function () {
     return {
-      visible:false,
-      title:"绑定已有用户",
-      selectedRowKeys:[],
+      visible: false,
+      title: '绑定已有用户',
+      selectedRowKeys: [],
       tablePageConfig: {
-         formItem: [
+        formItem: [
           {
             component: 'a-input',
             options: {
@@ -53,7 +53,7 @@ export default {
             attrs: {
               placeholder: '请输入登陆账户',
             },
-          }
+          },
         ],
         setHTTParams: {
           pageNo: 1,
@@ -63,7 +63,12 @@ export default {
         },
         getAsyncDate: null,
         columns: [
-          { title: '序号', dataIndex: 'id', key: 'id' ,scopedSlots: { customRender: 'index' },},
+          {
+            title: '序号',
+            dataIndex: 'id',
+            key: 'id',
+            scopedSlots: { customRender: 'index' },
+          },
           { title: '登陆账户', dataIndex: 'username', key: 'username' },
           { title: '用户姓名', dataIndex: 'realname', key: 'realname' },
           { title: '工号', dataIndex: 'workNo', key: 'workNo' },
@@ -82,45 +87,59 @@ export default {
             key: 'status',
             scopedSlots: { customRender: 'status' },
           },
-        ]
+        ],
       },
     }
   },
   methods: {
     handleCancel() {
-      this.visible = false;
-      this.tablePageConfig.getAsyncDate = null;
-      this.selectedRowKeys = [];
+      this.visible = false
+      this.tablePageConfig.getAsyncDate = null
+      this.selectedRowKeys = []
     },
     async handleOk() {
-      console.log(this.selectedRowKeys);
-      await this.$http.post('/system/sys/role/addSysUserRole',{
-        "roleId":this.tablePageConfig.setHTTParams.roleId,
-        "userIdList": this.selectedRowKeys
-      });
-      this.handleCancel();
-      this.$emit("refresh")
+      console.log(this.selectedRowKeys)
+      await this.$http.post('/system/sys/role/addSysUserRole', {
+        roleId: this.tablePageConfig.setHTTParams.roleId,
+        userIdList: this.selectedRowKeys,
+      })
+      this.handleCancel()
+      this.$emit('refresh')
     },
-    onChange(data){
-      this.selectedRowKeys = data;
+    onChange(data) {
+      this.selectedRowKeys = data
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.system.sys.user.otherUserRoleList.get(params)
+        let { result } = await this.$api.system.sys.user.otherUserRoleList.get(
+          params
+        )
         next(result.records, result.total)
       }
     },
-    customRow(record, index){
+    customRow(record, index) {
       return {
-        on:{click:(e)=>{
-          let index = this.selectedRowKeys.indexOf(record.id);
-          ~index?this.selectedRowKeys.splice(index,1):this.selectedRowKeys.push(record.id);
-        }}
+        on: {
+          click: (e) => {
+            let index = this.selectedRowKeys.indexOf(record.id)
+            ~index
+              ? this.selectedRowKeys.splice(index, 1)
+              : this.selectedRowKeys.push(record.id)
+          },
+        },
       }
-    }
+    },
   },
   computed: {},
-  watch: {},
+  watch: {
+    visible(val) {
+      val &&
+        this.$nextTick(() => {
+          this.$refs.tablePage.initSearch()
+          this.list()
+        })
+    },
+  },
 }
 </script>
 

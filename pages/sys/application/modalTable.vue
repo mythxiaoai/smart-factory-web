@@ -120,7 +120,15 @@ export default {
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+     visible(val) {
+      val &&
+        this.$nextTick(() => {
+          this.$refs.tablePage.initSearch()
+          this.list()
+        })
+    },
+  },
 }
 </script>
 

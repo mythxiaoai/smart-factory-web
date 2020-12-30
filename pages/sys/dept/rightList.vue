@@ -137,7 +137,7 @@ export default {
     handleBindUser() {
       this.$refs.modalTable.visible = true
       this.$refs.modalTable.tablePageConfig.setHTTParams.depId = this.tablePageConfig.setHTTParams.depId
-      this.$refs.modalTable.list()
+      // this.$refs.modalTable.list()
     },
   },
   computed: {},

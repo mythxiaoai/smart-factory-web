@@ -47,7 +47,7 @@
       </a-card>
     </a-col>
     <a-col v-show="showUser" :md="12" :sm="24">
-      <user ref="user" @hide="showUser = false"> </user>
+      <user ref="user" @hide="rightClose"> </user>
     </a-col>
   </a-row>
 </template>

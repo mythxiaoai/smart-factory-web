@@ -36,13 +36,13 @@ export function downloadXlsx (filename) {
 /**
  * 代码生成并下载为zip
  * @param {String} url 链接
- * @param {String} tables 表名
+ * @param {String} tableIds 表名id
  */
-export function genCodeZip (url, tables) {
+export function genCodeZip (url, tableIds) {
   this.$axios.request({
     url: url,
     method: 'get',
-    params: { tables: tables },
+    params: { tableIds: tableIds },
     responseType: 'blob'
   }).then(res => {
     resolveBlob(res, mimeMap.zip)

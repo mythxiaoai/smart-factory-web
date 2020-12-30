@@ -35,7 +35,10 @@
           <a-menu-item key="1" @click="batchGen(selectedRowKeys)"
             ><a-icon type="download" />生成代码</a-menu-item
           >
-          <a-menu-item key="2" @click="delByIds(selectedRowKeys)"
+          <a-menu-item key="2" @click="editByIds(selectedRowKeys)"
+            ><a-icon type="edit" />修改</a-menu-item
+          >
+          <a-menu-item key="3" @click="delByIds(selectedRowKeys)"
             ><a-icon type="delete" />删除</a-menu-item
           >
         </a-menu>
@@ -67,11 +70,15 @@
         <a-divider type="vertical" />
         <a @click="delByIds([record.tableId])">删除</a>
         <a-divider type="vertical" />
-        <a @click="handleGen([record.tableName])">生成代码</a>
+        <a @click="handleGen([record.tableId])">生成代码</a>
       </span>
     </s-table>
     <db-list-modal ref="dbmodal" @ok="handleOk" />
     <preview-modal ref="premodal" @ok="handleOk" />
+    <modal-edit
+      ref="modalForm"
+      @refresh="$refs.table.refresh(true)"
+    ></modal-edit>
   </a-card>
 </template>
 
@@ -82,6 +89,7 @@ import STable from '@/pages/dev/gen/modules/Table/index.js'
 import DbListModal from './modules/DbListModal.vue'
 import PreviewModal from './modules/PreviewModal.vue'
 import { genCodeZip } from './modules/download'
+import modalEdit from './modules/modalEdit.vue'
 const commonStatusMap = {}
 export default {
   name: 'TableList',
@@ -89,6 +97,7 @@ export default {
     STable,
     DbListModal,
     PreviewModal,
+    modalEdit,
   },
   data() {
     return {
@@ -176,6 +185,7 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
+      console.log(selectedRows)
     },
     lead() {
       this.$refs.dbmodal.show()
@@ -186,14 +196,21 @@ export default {
     handlePreview(tableId) {
       this.$refs.premodal.show(tableId)
     },
-    batchGen() {
-      const tables = this.selectedRows.map((t) => {
-        return t.tableName
+    editByIds() {
+      this.$refs.modalForm.visible = true
+      const tableIds = this.selectedRows.map((t) => {
+        return t.tableId
       })
-      this.handleGen(tables)
+      this.$refs.modalForm.form.tableIds = tableIds.join(',')
     },
-    handleGen(tables) {
-      genCodeZip.call(this, '/generator/gen/batchGenCode', tables.join(','))
+    batchGen() {
+      const tableIds = this.selectedRows.map((t) => {
+        return t.tableId
+      })
+      this.handleGen(tableIds)
+    },
+    handleGen(tableIds) {
+      genCodeZip.call(this, '/generator/gen/batchGenCode', tableIds.join(','))
     },
     handleOk() {
       this.$refs.table.refresh(true)

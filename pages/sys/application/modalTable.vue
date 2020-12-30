@@ -40,7 +40,7 @@ export default {
   data: function () {
     return {
       visible:false,
-      title:"操作",
+      title:"绑定已有用户",
       selectedRowKeys:[],
       tablePageConfig: {
          formItem: [
@@ -106,7 +106,7 @@ export default {
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$http.get('/system/sys/client/list', params)
+        let { result } = await this.$http.get('/system/sys/user/otherUserClientList', params)
         next(result.records, result.total)
       }
     },

@@ -111,7 +111,7 @@ export default {
       this.$refs.modalForm.form = result
     },
     async handleDelete(id) {
-      await this.$http.sys.diction.del([id])
+      await this.$api.system.sys.dict.deleteBatch.delete([id])
       this.list()
       //刷新全局字典表
       this.$store.dispatch('security/getAlldict')

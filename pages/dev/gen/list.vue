@@ -2,14 +2,21 @@
   <a-card :bordered="false">
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
+        <a-form-item label="数据源名称">
+          <a-select v-model="queryParam.pollName" style="width: 240px">
+            <a-select-option
+              v-for="item in selectBaseList"
+              :key="item.pollName"
+            >
+              {{ item.pollName }}{{ item.remark ? `(${item.remark})` : '' }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item label="表名称">
           <a-input placeholder="请输入" v-model="queryParam.tableName" />
         </a-form-item>
         <a-form-item label="表描述">
           <a-input placeholder="请输入" v-model="queryParam.tableComment" />
-        </a-form-item>
-        <a-form-item label="数据源名称">
-          <a-input placeholder="请输入" v-model="queryParam.pollName" />
         </a-form-item>
         <a-form-item label="表时间">
           <a-range-picker v-model="range" />
@@ -18,9 +25,7 @@
           <a-button type="primary" @click="$refs.table.refresh(true)"
             >查询</a-button
           >
-          <a-button style="margin-left: 8px" @click="() => (queryParam = {})"
-            >重置</a-button
-          >
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         </span>
       </a-form>
     </div>
@@ -124,6 +129,7 @@ export default {
           title: '序号',
           scopedSlots: { customRender: 'serial' },
         },
+        { title: '数据源名称', dataIndex: 'pollName', key: 'pollName' },
         {
           title: '表名',
           dataIndex: 'tableName',
@@ -136,7 +142,6 @@ export default {
           title: '实体类名称',
           dataIndex: 'className',
         },
-        { title: '数据源名称', dataIndex: 'pollName', key: 'pollName' },
         {
           title: '创建时间',
           dataIndex: 'createTime',
@@ -165,6 +170,7 @@ export default {
       commonStatus: [],
       selectedRowKeys: [],
       selectedRows: [],
+      selectBaseList: [],
     }
   },
   filters: {
@@ -180,8 +186,27 @@ export default {
     },
   },
   beforeCreate() {},
-  created() {},
+  created() {
+    this.show()
+  },
   methods: {
+    reset() {
+      this.queryParam = {}
+      this.$refs.table.refresh(true)
+    },
+    async show() {
+      this.visible = true
+      let res = await this.$http.get('/generator/datasource/list', {
+        pageSize: 999,
+      })
+      this.selectBaseList = res.result.records.map((v) => {
+        return {
+          pollName: v.pollName,
+          dbType: v.dbType,
+          remark: v.remark,
+        }
+      })
+    },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows

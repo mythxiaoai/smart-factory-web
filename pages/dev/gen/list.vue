@@ -2,19 +2,26 @@
   <a-card :bordered="false">
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
-            <a-form-item label="表名称">
-              <a-input placeholder="请输入" v-model="queryParam.tableName"/>
-            </a-form-item>
-            <a-form-item label="表描述">
-              <a-input placeholder="请输入" v-model="queryParam.tableComment"/>
-            </a-form-item>
-            <a-form-item label="表时间">
-              <a-range-picker v-model="range"/>
-            </a-form-item>
-            <span class="table-page-search-submitButtons">
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
-            </span>
+        <a-form-item label="表名称">
+          <a-input placeholder="请输入" v-model="queryParam.tableName" />
+        </a-form-item>
+        <a-form-item label="表描述">
+          <a-input placeholder="请输入" v-model="queryParam.tableComment" />
+        </a-form-item>
+        <a-form-item label="数据源名称">
+          <a-input placeholder="请输入" v-model="queryParam.pollName" />
+        </a-form-item>
+        <a-form-item label="表时间">
+          <a-range-picker v-model="range" />
+        </a-form-item>
+        <span class="table-page-search-submitButtons">
+          <a-button type="primary" @click="$refs.table.refresh(true)"
+            >查询</a-button
+          >
+          <a-button style="margin-left: 8px" @click="() => (queryParam = {})"
+            >重置</a-button
+          >
+        </span>
       </a-form>
     </div>
     <div class="table-operator">
@@ -25,8 +32,12 @@
       </a-dropdown> -->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchGen(selectedRowKeys)"><a-icon type="download" />生成代码</a-menu-item>
-          <a-menu-item key="2" @click="delByIds(selectedRowKeys)"><a-icon type="delete" />删除</a-menu-item>
+          <a-menu-item key="1" @click="batchGen(selectedRowKeys)"
+            ><a-icon type="download" />生成代码</a-menu-item
+          >
+          <a-menu-item key="2" @click="delByIds(selectedRowKeys)"
+            ><a-icon type="delete" />删除</a-menu-item
+          >
         </a-menu>
         <a-button style="margin-left: 8px">
           批量操作 <a-icon type="down" />
@@ -37,7 +48,10 @@
       size="default"
       ref="table"
       rowKey="tableId"
-      :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+      :rowSelection="{
+        selectedRowKeys: selectedRowKeys,
+        onChange: onSelectChange,
+      }"
       :columns="columns"
       :data="loadData"
       :rangPicker="range"
@@ -47,7 +61,7 @@
         {{ index + 1 }}
       </span>
       <span slot="action" slot-scope="text, record">
-        <a  @click="handlePreview(record.tableId)">预览</a>
+        <a @click="handlePreview(record.tableId)">预览</a>
         <a-divider type="vertical" />
         <a @click="handleEdit(record.tableId)">编辑</a>
         <a-divider type="vertical" />
@@ -74,19 +88,19 @@ export default {
   components: {
     STable,
     DbListModal,
-    PreviewModal
+    PreviewModal,
   },
-  data () {
+  data() {
     return {
       description: '代码生成工具，先导入，再生成',
       visible: false,
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 5 }
+        sm: { span: 5 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 }
+        sm: { span: 16 },
       },
       form: this.$form.createForm(this),
       mdl: {},
@@ -99,93 +113,93 @@ export default {
       columns: [
         {
           title: '序号',
-          scopedSlots: { customRender: 'serial' }
+          scopedSlots: { customRender: 'serial' },
         },
         {
           title: '表名',
-          dataIndex: 'tableName'
+          dataIndex: 'tableName',
         },
         {
           title: '表描述',
-          dataIndex: 'tableComment'
+          dataIndex: 'tableComment',
         },
         {
           title: '实体类名称',
-          dataIndex: 'className'
+          dataIndex: 'className',
         },
+        { title: '数据源名称', dataIndex: 'pollName', key: 'pollName' },
         {
           title: '创建时间',
           dataIndex: 'createTime',
-          sorter: true
+          sorter: true,
         },
         {
           title: '更新时间',
           dataIndex: 'updateTime',
-          sorter: true
+          sorter: true,
         },
         {
           title: '操作',
           width: '240px',
           dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
-        }
+          scopedSlots: { customRender: 'action' },
+        },
       ],
       range: null,
       // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        return this.$http.get('/generator/gen/list',Object.assign(parameter, this.queryParam))
+      loadData: (parameter) => {
+        return this.$http.get(
+          '/generator/gen/list',
+          Object.assign(parameter, this.queryParam)
+        )
       },
       commonStatus: [],
       selectedRowKeys: [],
       selectedRows: [],
-
     }
   },
   filters: {
-    operTypeFilter (type) {
+    operTypeFilter(type) {
       return commonStatusMap[type].text
     },
-    statusFilter (status) {
+    statusFilter(status) {
       const statusMap = {
-        '1': '失败',
-        '0': '成功'
+        1: '失败',
+        0: '成功',
       }
       return statusMap[status]
-    }
+    },
   },
-  beforeCreate () {
-
-  },
-  created () {
-  },
+  beforeCreate() {},
+  created() {},
   methods: {
-    onSelectChange (selectedRowKeys, selectedRows) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    lead () {
+    lead() {
       this.$refs.dbmodal.show()
     },
-    handleEdit (tableId) {
-      this.$router.push({ path: '/dev/gen/edit', query: { tableId: tableId } });
+    handleEdit(tableId) {
+      this.$router.push({ path: '/dev/gen/edit', query: { tableId: tableId } })
     },
-    handlePreview (tableId) {
+    handlePreview(tableId) {
       this.$refs.premodal.show(tableId)
     },
-    batchGen () {
-      const tables = this.selectedRows.map(t => {
+    batchGen() {
+      const tables = this.selectedRows.map((t) => {
         return t.tableName
       })
       this.handleGen(tables)
     },
-    handleGen (tables) {
-      genCodeZip.call(this,'/generator/gen/batchGenCode', tables.join(','))
+    handleGen(tables) {
+      genCodeZip.call(this, '/generator/gen/batchGenCode', tables.join(','))
     },
-    handleOk () {
+    handleOk() {
       this.$refs.table.refresh(true)
     },
-    delByIds (ids) {
-      this.$http.post('/generator/gen/remove',ids).then(res => {
+    delByIds(ids) {
+      this.$http.post('/generator/gen/remove', ids).then((res) => {
         if (res.success) {
           this.$message.success(`删除成功`)
           this.handleOk()
@@ -194,7 +208,7 @@ export default {
         }
         this.selectedRowKeys = []
       })
-    }
+    },
   },
   watch: {
     /*
@@ -209,6 +223,6 @@ export default {
         })
       }
       */
-  }
+  },
 }
 </script>

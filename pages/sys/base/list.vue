@@ -7,7 +7,7 @@
       </template>
 
       <span slot="operation" slot-scope="{ text }">
-        <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
+        <!-- <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a> -->
         <a-divider type="vertical" />
         <a>
           <a-icon type="delete" />
@@ -37,10 +37,15 @@ export default {
         getAsyncDate: null,
         columns: [
           { title: '数据源地址', dataIndex: 'url', key: 'url' },
-          { title: '驱动类', dataIndex: 'driverClassName', key: 'driverClassName' },
-          { title: '数据库名称', dataIndex: 'pollName', key: 'pollName' },
+          {
+            title: '驱动类',
+            dataIndex: 'driverClassName',
+            key: 'driverClassName',
+          },
+          { title: '数据源名称', dataIndex: 'pollName', key: 'pollName' },
           { title: '用户名', dataIndex: 'username', key: 'username' },
           { title: '密码', dataIndex: 'password', key: 'password' },
+          { title: '备注', dataIndex: 'remark', key: 'remark' },
           {
             title: '操作',
             key: 'operation',
@@ -61,12 +66,15 @@ export default {
       // this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(name) {
-      await this.$http.delete('/generator/datasources',[name])
+      await this.$http.delete('/generator/datasources', [name])
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$http.get('/generator/datasource/list',params)
+        let { result } = await this.$http.get(
+          '/generator/datasource/list',
+          params
+        )
         next(result.records, result.total)
       }
     },
@@ -74,7 +82,7 @@ export default {
   computed: {},
   watch: {},
   components: {
-    modalForm
+    modalForm,
   },
 }
 </script>

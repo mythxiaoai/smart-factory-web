@@ -9,7 +9,7 @@
   >
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
-        <a-form-item label="当前数据库">
+        <a-form-item label="当前数据源">
           <a-select
             v-model="selectBase"
             @change="changeBase"
@@ -19,7 +19,7 @@
               v-for="item in selectBaseList"
               :key="item.pollName"
             >
-              {{ item.pollName }}
+              {{ item.pollName }}{{ item.remark ? `(${item.remark})` : '' }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -153,6 +153,7 @@ export default {
         return {
           pollName: v.pollName,
           dbType: v.dbType,
+          remark: v.remark,
         }
       })
 
@@ -177,6 +178,7 @@ export default {
       let queryParam = {
         tables: this.selectedRowKeys,
         dbType: this.queryParam.dbType,
+        pollName:this.selectBase
       }
       this.$http
         .post('/generator/gen/importTable', queryParam, {

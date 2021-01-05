@@ -39,7 +39,7 @@
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
-          prop="authorizedGrantTypes"
+          prop="authorizedGrantTypesShow"
         >
           <a-select
             mode="multiple"
@@ -256,7 +256,7 @@ export default {
           { validator: this.unique1, trigger: 'blur' },
         ],
         clientName: [{ required: true, message: '不能为空~', trigger: 'blur' }],
-        authorizedGrantTypes: [
+        authorizedGrantTypesShow: [
           { required: true, message: '不能为空~', trigger: 'blur' },
         ],
         resourceIdsShow: [

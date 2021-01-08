@@ -132,7 +132,7 @@ export default {
         //字典
         const http = this.form.id
           ? this.$api.system.sys.role.edit.put
-          : this.$api.system.sys.role.add.get
+          : this.$api.system.sys.role.add.post
 
         await http(this.form)
 

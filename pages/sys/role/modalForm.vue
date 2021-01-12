@@ -58,7 +58,7 @@ export default {
         roleId: this.form.id,
         roleCode: value,
       })
-      !res.result ? callback() : callback(new Error('需要保证值唯一'))
+      !res.result ? callback() : callback(new Error(res.message))
     }
     return {
       //title: '操作',
@@ -80,10 +80,22 @@ export default {
       },
       rules: {
         roleCode: [
-          { required: true, message: '不能为空~', trigger: 'blur' },
+          {
+            required: true,
+            message: '不能为空~',
+            trigger: 'blur',
+            whitespace: true,
+          },
           { validator: unique1, trigger: 'blur' },
         ],
-        roleName: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+        roleName: [
+          {
+            required: true,
+            message: '不能为空~',
+            trigger: 'blur',
+            whitespace: true,
+          },
+        ],
       },
     }
   },

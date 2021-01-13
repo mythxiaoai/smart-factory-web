@@ -58,6 +58,8 @@ export default {
     '/rjgf/api/': {
       //target: 'http://192.168.110.241:9122/',//测试
       target: 'http://192.168.110.241:9001/',//开发
+      //target: 'http://192.168.181.178:9002/',//狄文
+      // target: 'http://192.168.110.241:9101/',//开发
       //target: 'http://113.108.148.245:9594/',
       //target: 'http://192.168.110.240:9200/mock/122/',
       changeOrigin: true,

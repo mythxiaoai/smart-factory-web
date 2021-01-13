@@ -12,6 +12,7 @@
       ref="tablePage"
       :row-selection="{ selectedRowKeys, onChange }"
       :customRow="customRow"
+      :scroll="{ y: 260 }"
     >
       <!--序号-->
       <template #index="{ index }">
@@ -98,7 +99,10 @@ export default {
       this.selectedRowKeys = []
     },
     async handleOk() {
-      console.log(this.selectedRowKeys)
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.warning('请选择绑定用户!')
+        return
+      }
       await this.$http.post('/system/sys/role/addSysUserRole', {
         roleId: this.tablePageConfig.setHTTParams.roleId,
         userIdList: this.selectedRowKeys,

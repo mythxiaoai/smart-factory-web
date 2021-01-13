@@ -1,20 +1,49 @@
+ <!--文本框-->
  <template>
-  <div></div>
+  <a-form-model-item
+    :label="columnNameCn"
+    :label-col="labelCol"
+    :wrapper-col="wrapperCol"
+  >
+    <a-radio-group v-bind="subAttribute">
+      <a-radio :value="1"> A </a-radio>
+      <a-radio :value="2"> B </a-radio>
+      <a-radio :value="3"> C </a-radio>
+      <a-radio :value="4"> D </a-radio>
+    </a-radio-group>
+  </a-form-model-item>
 </template>
 
 <script>
 export default {
-  async asyncData(content) {},
-  fetch({ store, params }) {},
+  props: {
+    columnNameCn: {
+      type: String,
+      default: '标题',
+    },
+    subAttribute: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   created() {},
   mounted() {},
-  data: function() {
-    return {}
+  data: function () {
+    return {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+      },
+    }
   },
   methods: {},
   computed: {},
   watch: {},
-  components: {}
+  components: {},
 }
 </script>
 

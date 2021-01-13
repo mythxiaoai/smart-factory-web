@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       title:"业务名称",
-      visible:false,
+      visible:true,
       confirmLoading:false,
     }
   },
@@ -77,7 +77,7 @@ export default {
       this.visible = false
       // 值还原
       //取消验证状态
-      this.close()
+     // this.close()
     },
   },
 }
@@ -108,6 +108,7 @@ export default {
   }
   .body {
     flex: 1;
+   
   }
   .config {
     width: 350px;
@@ -139,13 +140,13 @@ export default {
 >>>.online .ant-tabs{
   height: 100%;
 }
->>>.online .ant-form-item-label{
+>>>.online .config .ant-form-item-label{
   text-align:left;
   padding-left:16px;
 }
 
 
->>>.online .ant-input-group .ant-input{
+>>>.online .config .ant-input-group .ant-input{
   float:none;
 }
 >>>.online .ant-collapse-content{

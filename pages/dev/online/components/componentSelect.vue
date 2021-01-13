@@ -1,72 +1,79 @@
 组件选择
 <template>
-  <ul class="components">
-    <!-- <li class="item">
-      <div class="title">文本框</div>
-      <div class="body">
-        <img src="/img/1.png" width="100" height="78" />
-      </div>
-    </li> -->
+  <draggable
+    class="components"
+    tag="ul"
+    :list="components"
+    :options="{
+      group: { name: 'component', pull: 'clone', put: false },
+      sort: false,
+      animation: 100,
+    }"
+      
+  >
     <li class="item" v-for="v of components" :key="v.title">
-       <div class="title">{{v.title}}</div>
-      <div class="body" :style="`background-image: url(${v.imgbg});background-size:cover`">
-      </div>
+      <div class="title">{{ v.title }}</div>
+      <div
+        class="body"
+        :style="`background-image: url(${v.imgbg});background-size:cover`"
+      ></div>
     </li>
-  </ul>
+  </draggable>
 </template>
 
 <script>
-let components = [
-  '文本框',
-  '密码框',
-  '下拉框-单选',
-  '下拉框-多选',
-  '单选框',
-  '多选框',
-  '时间控制器',
-  '开关控制',
-  '多文本',
-]
-//JSON.stringify(["文本框","密码框","下拉框-单选","下拉框-多选","单选框","多选框","时间控制器","开关控制","多文本"].map((v,i)=>({title:v,imgbg:`/img/${i}.png`})),null,4)
+import draggable from 'vuedraggable'
 export default {
+  components: {
+    draggable,
+  },
   data() {
     return {
       components: [
         {
           title: '文本框',
           imgbg: '/img/0.png',
+          componentName: 'o-text',
         },
         {
           title: '密码框',
           imgbg: '/img/1.png',
+          componentName: 'o-password',
         },
         {
           title: '下拉框-单选',
           imgbg: '/img/2.png',
+          componentName: 'o-select',
         },
         {
           title: '下拉框-多选',
           imgbg: '/img/3.png',
+          componentName: 'o-select-m',
         },
         {
           title: '单选框',
           imgbg: '/img/4.png',
+          componentName: 'o-radio',
         },
         {
           title: '多选框',
           imgbg: '/img/5.png',
+          componentName: 'o-check',
         },
         {
           title: '时间控制器',
           imgbg: '/img/6.png',
+          componentName: 'o-date',
         },
         {
           title: '开关控制',
           imgbg: '/img/7.png',
+          componentName: 'o-switch',
         },
         {
           title: '多文本',
           imgbg: '/img/8.png',
+          componentName: 'o-textarea',
         },
       ],
     }

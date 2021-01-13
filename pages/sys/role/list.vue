@@ -6,6 +6,7 @@
           v-bind="tablePageConfig"
           :customRow="customRow"
           :rowClassName="rowSetClass"
+          :scroll="{ x: true }"
         >
           <template #table-operator>
             <a-button @click="handleAdd" type="primary" icon="plus"
@@ -88,6 +89,7 @@ export default {
           {
             title: '操作',
             key: 'operation',
+            fixed: 'right',
             scopedSlots: { customRender: 'operation' },
           },
         ],

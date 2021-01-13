@@ -1,6 +1,6 @@
 <template>
   <a-card :bordered="false">
-    <table-page v-bind="tablePageConfig" ref="tablePage">
+    <table-page v-bind="tablePageConfig" ref="tablePage" :scroll="{ x: true }">
       <template #page-opts>
         <a class="close" @click="$emit('hide')"
           ><a-icon type="close"></a-icon
@@ -102,6 +102,7 @@ export default {
           {
             title: '操作',
             key: 'operation',
+            fixed: 'right',
             scopedSlots: { customRender: 'operation' },
           },
         ],
@@ -119,10 +120,13 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      let res = await this.$http.delete('/system/sys/depart/deleteUserInDepart', {
-        depId: this.tablePageConfig.setHTTParams.depId,
-        userIdList: [id],
-      })
+      let res = await this.$http.delete(
+        '/system/sys/depart/deleteUserInDepart',
+        {
+          depId: this.tablePageConfig.setHTTParams.depId,
+          userIdList: [id],
+        }
+      )
       res.success && this.$message.success('解除关系成功~')
       this.list()
     },

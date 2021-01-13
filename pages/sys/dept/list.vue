@@ -45,6 +45,7 @@
           }"
           @change="change"
           :customRow="customRow"
+          :scroll="{ x: true }"
         >
           <span slot="operation" slot-scope="text, record" @click.stop="">
             <a @click="handleUserConfig(record.id)">用户信息</a>
@@ -114,6 +115,7 @@ export default {
         {
           title: '操作',
           key: 'operation',
+          fixed: 'right',
           scopedSlots: { customRender: 'operation' },
         },
       ],

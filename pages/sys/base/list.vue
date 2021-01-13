@@ -1,7 +1,7 @@
 //数据源管理
 <template>
   <a-card :bordered="false">
-    <table-page v-bind="tablePageConfig">
+    <table-page v-bind="tablePageConfig" :scroll="{ x: true }">
       <template #table-operator>
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
       </template>
@@ -49,6 +49,7 @@ export default {
           {
             title: '操作',
             key: 'operation',
+            fixed: 'right',
             scopedSlots: { customRender: 'operation' },
           },
         ],

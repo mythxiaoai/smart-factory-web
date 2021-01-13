@@ -90,7 +90,7 @@
 const pagination = {
   pageSize: 10,
   current: 1,
-  total: 50,
+  total: 0,
 }
 
 let query = {
@@ -137,7 +137,7 @@ export default {
   },
   data: function () {
     return {
-      firstInto:true,
+      firstInto: true,
       queryParam: null,
       pagination,
       loading: false,
@@ -157,7 +157,7 @@ export default {
       })
     },
     initSearch() {
-      let query = JSON.parse(JSON.stringify(this.setHTTParams));
+      let query = JSON.parse(JSON.stringify(this.setHTTParams))
       //查询参数
       this.formItem.forEach((v) => {
         let key = v?.options?.prop
@@ -209,7 +209,7 @@ export default {
       this.loading = true
       this.getAsyncDate(this.queryParam, (data, total) => {
         this.dataSource = data
-        total && (this.pagination.total = total)
+        if (this.pagination) this.pagination.total = total ?? 0
         this.loading = false
       })
     },
@@ -257,20 +257,19 @@ export default {
       deep: true,
     },
     getAsyncDate: {
-      handler(){
-          if(this.firstInto){
-            this.initSearch();
-            this.list();
-            this.firstInto = false;
-          }else{
-            this.list();
-          }
+      handler() {
+        if (this.firstInto) {
+          this.initSearch()
+          this.list()
+          this.firstInto = false
+        } else {
+          this.list()
+        }
       },
       immediate: true,
     },
   },
 }
-
 </script>
 <style scoped lang="less">
 </style>

@@ -1,9 +1,14 @@
 <template>
   <a-card :bordered="false">
-    <table-page v-bind="tablePageConfig" ref="tablePage">
-
+    <table-page
+      v-bind="tablePageConfig"
+      ref="tablePage"
+      :scroll="{ x: true }"
+    >
       <template #page-opts>
-        <a class="close" @click="$emit('hide')"><a-icon type="close"></a-icon></a>
+        <a class="close" @click="$emit('hide')"
+          ><a-icon type="close"></a-icon
+        ></a>
       </template>
 
       <template #table-operator>
@@ -32,7 +37,8 @@
         <a @click="handleUpdate(text)"> <a-icon type="edit" /> 修改 </a>
         <a-divider type="vertical" />
         <a>
-          <a-icon type="delete" /> <a-popconfirm
+          <a-icon type="delete" />
+          <a-popconfirm
             title="确定解除与该角色的关系吗?"
             @confirm="() => handleDelete(text.id)"
           >
@@ -69,7 +75,7 @@ export default {
             attrs: {
               placeholder: '请输入登陆账户',
             },
-          }
+          },
         ],
         setHTTParams: {
           pageNo: 1,
@@ -100,6 +106,7 @@ export default {
           {
             title: '操作',
             key: 'operation',
+            fixed: 'right',
             scopedSlots: { customRender: 'operation' },
           },
         ],
@@ -117,38 +124,40 @@ export default {
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      let res = await this.$http.delete("/system/sys/role/deleteUserRole",{
+      let res = await this.$http.delete('/system/sys/role/deleteUserRole', {
         roleId: this.tablePageConfig.setHTTParams.roleId,
         userIdList: [id],
       })
-      res.success && this.$message.success("解除关系成功~");
+      res.success && this.$message.success('解除关系成功~')
       this.list()
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.system.sys.user.userRoleList.get(params)
+        let { result } = await this.$api.system.sys.user.userRoleList.get(
+          params
+        )
         next(result.records, result.total)
       }
     },
     handleBindUser() {
-        this.$refs.modalTable.visible = true;
-        this.$refs.modalTable.tablePageConfig.setHTTParams.roleId = this.tablePageConfig.setHTTParams.roleId;
-        //this.$refs.modalTable.list();
+      this.$refs.modalTable.visible = true
+      this.$refs.modalTable.tablePageConfig.setHTTParams.roleId = this.tablePageConfig.setHTTParams.roleId
+      //this.$refs.modalTable.list();
     },
   },
   computed: {},
   watch: {},
   components: {
     modalForm,
-    modalTable
+    modalTable,
   },
 }
 </script>
 <style scoped lang="less">
-.close{
+.close {
   position: absolute;
-  right:20px;
-  top:20px;
+  right: 20px;
+  top: 20px;
   font-size: 16px;
 }
 </style>

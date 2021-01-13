@@ -9,7 +9,6 @@
       width="240"
     >
       <system-info size="small" />
-      {{ menu[0].name }}
       <a-menu
         theme="dark"
         mode="inline"
@@ -79,7 +78,7 @@
               <span>欢迎您，{{userInfo.realname}}</span>
             </span>
             <a-menu slot="overlay">
-              <a-menu-item key="0">
+              <!-- <a-menu-item key="0">
                 <a-icon type="user" />
                 <span>个人中心</span>
               </a-menu-item>
@@ -90,7 +89,7 @@
               <a-menu-item key="3">
                 <a-icon type="tool" />
                 <span>系统设置</span>
-              </a-menu-item>
+              </a-menu-item> -->
               <a-menu-item key="4">
                 <a-icon type="setting" />
                 <span @click="handlePassword">密码修改</span>

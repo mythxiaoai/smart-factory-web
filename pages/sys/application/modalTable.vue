@@ -12,6 +12,7 @@
       ref="tablePage"
       :row-selection="{ selectedRowKeys, onChange }"
       :customRow="customRow"
+      :scroll="{ y: 260 }"
     >
       <!--序号-->
       <template #index="{ index }">
@@ -39,11 +40,11 @@ export default {
   mounted() {},
   data: function () {
     return {
-      visible:false,
-      title:"绑定已有用户",
-      selectedRowKeys:[],
+      visible: false,
+      title: '绑定已有用户',
+      selectedRowKeys: [],
       tablePageConfig: {
-         formItem: [
+        formItem: [
           {
             component: 'a-input',
             options: {
@@ -53,7 +54,7 @@ export default {
             attrs: {
               placeholder: '请输入登陆账户',
             },
-          }
+          },
         ],
         setHTTParams: {
           pageNo: 1,
@@ -63,7 +64,12 @@ export default {
         },
         getAsyncDate: null,
         columns: [
-          { title: '序号', dataIndex: 'id', key: 'id' ,scopedSlots: { customRender: 'index' },},
+          {
+            title: '序号',
+            dataIndex: 'id',
+            key: 'id',
+            scopedSlots: { customRender: 'index' },
+          },
           { title: '登陆账户', dataIndex: 'username', key: 'username' },
           { title: '用户姓名', dataIndex: 'realname', key: 'realname' },
           { title: '工号', dataIndex: 'workNo', key: 'workNo' },
@@ -82,46 +88,56 @@ export default {
             key: 'status',
             scopedSlots: { customRender: 'status' },
           },
-        ]
+        ],
       },
     }
   },
   methods: {
     handleCancel() {
-      this.visible = false;
-      this.tablePageConfig.getAsyncDate = null;
-      this.selectedRowKeys = [];
+      this.visible = false
+      this.tablePageConfig.getAsyncDate = null
+      this.selectedRowKeys = []
     },
     async handleOk() {
-      console.log(this.selectedRowKeys);
-      await this.$http.post('/system/sys/client/addClientAdmin',{
-        "clientId":this.tablePageConfig.setHTTParams.clientId,
-        "userIds": this.selectedRowKeys
-      });
-      this.handleCancel();
-      this.$emit("refresh")
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.warning('请选择绑定用户!')
+        return
+      }
+      await this.$http.post('/system/sys/client/addClientAdmin', {
+        clientId: this.tablePageConfig.setHTTParams.clientId,
+        userIds: this.selectedRowKeys,
+      })
+      this.handleCancel()
+      this.$emit('refresh')
     },
-    onChange(data){
-      this.selectedRowKeys = data;
+    onChange(data) {
+      this.selectedRowKeys = data
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$http.get('/system/sys/user/otherUserClientList', params)
+        let { result } = await this.$http.get(
+          '/system/sys/user/otherUserClientList',
+          params
+        )
         next(result.records, result.total)
       }
     },
-    customRow(record, index){
+    customRow(record, index) {
       return {
-        on:{click:(e)=>{
-          let index = this.selectedRowKeys.indexOf(record.id);
-          ~index?this.selectedRowKeys.splice(index,1):this.selectedRowKeys.push(record.id);
-        }}
+        on: {
+          click: (e) => {
+            let index = this.selectedRowKeys.indexOf(record.id)
+            ~index
+              ? this.selectedRowKeys.splice(index, 1)
+              : this.selectedRowKeys.push(record.id)
+          },
+        },
       }
-    }
+    },
   },
   computed: {},
   watch: {
-     visible(val) {
+    visible(val) {
       val &&
         this.$nextTick(() => {
           this.$refs.tablePage.initSearch()

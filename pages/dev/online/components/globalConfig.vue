@@ -65,9 +65,12 @@
             <a-list item-layout="horizontal" :data-source="$form.indexList">
               <a-list-item slot="renderItem" slot-scope="item, index">
                 <a-row type="flex" justify="center">
-
                   <a-col flex="2">
-                    <a-input type="text" v-model="item.itemName" size="small"></a-input>
+                    <a-input
+                      type="text"
+                      v-model="item.itemName"
+                      size="small"
+                    ></a-input>
                   </a-col>
 
                   <a-col flex="2">
@@ -80,7 +83,7 @@
                       <a-select-option
                         v-for="v of $form.columnList"
                         :key="v.id"
-                        :value = "v.columnName"
+                        :value="v.columnName"
                         >{{ v.columnName }}</a-select-option
                       >
                     </a-select>
@@ -94,13 +97,27 @@
                   </a-col>
 
                   <a-col flex="1">
-                    <a-button v-show="$form.indexList.length>1" type="primary" size="small" icon="delete" @click="delIndex(index)"/>
+                    <a-button
+                      v-show="$form.indexList.length > 1"
+                      type="primary"
+                      size="small"
+                      icon="delete"
+                      @click="delIndex(index)"
+                    />
                   </a-col>
                 </a-row>
               </a-list-item>
             </a-list>
-             <a-row type="flex">
-               <a-button type="primary" @click="addIndex" icon="plus" size="small" block> 新增</a-button>
+            <a-row type="flex">
+              <a-button
+                type="primary"
+                @click="addIndex"
+                icon="plus"
+                size="small"
+                block
+              >
+                新增</a-button
+              >
             </a-row>
           </a-collapse-panel>
         </a-collapse>
@@ -187,9 +204,19 @@ export default {
   created() {
     //store form太长了  变短一点
     this.$form = this.$store.state.online.form
+    this.$store.state.online.rules.table.businessName[1] = {
+      validator: this.unique1,
+      trigger: 'blur',
+    }
   },
   mounted() {},
   data: function () {
+    let unique1 = async (rule, value, callback) => {
+      let res = await this.$api.generator.dev.business.check.business.name.get({
+        businessName: value,
+      })
+      !res.result ? callback() : callback(new Error(res.message))
+    }
     return {
       formItemConfig: {
         hasFeedback: true,
@@ -198,6 +225,7 @@ export default {
       },
       hidefiles,
       indexData,
+      unique1,
     }
   },
   methods: {
@@ -205,16 +233,18 @@ export default {
       this.$form.business.pageFlagShow = val
       this.$form.business.pageFlag = val ? 1 : 0
     },
-    handleChange(index){
-      this.$form.indexList[index].indexColumn = this.$form.indexList[index].indexColumnShow.join(',');
+    handleChange(index) {
+      this.$form.indexList[index].indexColumn = this.$form.indexList[
+        index
+      ].indexColumnShow.join(',')
     },
-    delIndex(index){
-      this.$form.indexList.splice(index,1)
+    delIndex(index) {
+      this.$form.indexList.splice(index, 1)
     },
-    addIndex(){
-      let newObj = JSON.parse(JSON.stringify(indexData));
-      this.$form.indexList.push(newObj);
-    }
+    addIndex() {
+      let newObj = JSON.parse(JSON.stringify(indexData))
+      this.$form.indexList.push(newObj)
+    },
   },
   computed: {},
   watch: {
@@ -227,5 +257,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

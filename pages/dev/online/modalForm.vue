@@ -23,20 +23,20 @@
         <preview></preview>
       </div>
       <div class="config">
-         <a-tabs v-model="$store.state.online.action">
+        <a-tabs v-model="$store.state.online.action">
           <a-tab-pane :key="1" tab="全局">
             <div class="scoll">
-                <globalConfig></globalConfig>
+              <globalConfig ref="globalConfig"></globalConfig>
             </div>
           </a-tab-pane>
           <a-tab-pane :key="2" tab="表单" force-render>
-            <div class="scoll"><formConfig></formConfig></div>
+            <div class="scoll"><formConfig ref="formConfig"></formConfig></div>
           </a-tab-pane>
           <a-tab-pane :key="3" tab="列表">
-             <div class="scoll"><tableConfig></tableConfig></div>
+            <div class="scoll"><tableConfig></tableConfig></div>
           </a-tab-pane>
-          <a-tab-pane :key="4" tab="数据库">
-             <div class="scoll"><dbConfig></dbConfig></div>
+          <a-tab-pane :key="4" tab="数据库" force-render>
+            <div class="scoll"><dbConfig ref="dbConfig"></dbConfig></div>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -53,31 +53,44 @@ import tableConfig from './components/tableConfig'
 import preview from './components/preview'
 
 export default {
-  components: {componentSelect,dbConfig,formConfig,globalConfig,tableConfig,preview},
-  name: 'modalForm',
-  created() {
+  components: {
+    componentSelect,
+    dbConfig,
+    formConfig,
+    globalConfig,
+    tableConfig,
+    preview,
   },
+  name: 'modalForm',
+  created() {},
   data() {
     return {
-      title:"业务名称",
-      visible:false,
-      confirmLoading:false,
+      title: '业务名称',
+      visible: false,
+      confirmLoading: false,
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    initForm(){
-
-    },
-    handleOk() {
+    initForm() {},
+    async handleOk() {
+      let form = this.$store.state.online.form
       // 触发表单验证
+      this.$store.state.online.action = 1
+      await this.$refs.globalConfig.$refs.globalConfig.validate()
+
+      this.$store.state.online.action = 2
+     
+      await this.$refs.formConfig.$refs.formConfig.validate()
+
+      this.$store.state.online.action = 4
+      await this.$refs.dbConfig.$refs.dbConfig.validate()
     },
     handleCancel() {
       this.visible = false
       // 值还原
       //取消验证状态
-      this.close()
+      // this.close()
     },
   },
 }
@@ -114,15 +127,15 @@ export default {
     background: #f5f5f5;
     position: relative;
     font-size: 12px;
-    .scoll{
+    .scoll {
       position: absolute;
       top: 45px;
       height: calc(100% - 45px);
       left: 0px;
       right: -17px;
       overflow-y: auto;
-      >div{
-        width:350px;
+      > div {
+        width: 350px;
       }
     }
   }
@@ -132,48 +145,46 @@ export default {
 >>> .ant-modal-body {
   padding: 0;
 }
->>>.online .ant-form-item{
-  margin-bottom:0
+>>> .online .ant-form-item {
+  margin-bottom: 0;
 }
 
->>>.online .ant-tabs{
+>>> .online .ant-tabs {
   height: 100%;
 }
->>>.online .ant-form-item-label{
-  text-align:left;
-  padding-left:16px;
+>>> .online .ant-form-item-label {
+  text-align: left;
+  padding-left: 16px;
 }
 
-
->>>.online .ant-input-group .ant-input{
-  float:none;
+>>> .online .ant-input-group .ant-input {
+  float: none;
 }
->>>.online .ant-collapse-content{
-  background:#fff;
-}
-
-
->>>.online .ant-collapse{
-  font-size:12px;
-  background:transparent;
-}
->>>.online .ant-collapse-header{
-  padding:9px 16px;
-}
->>>.online .ant-collapse-borderless > .ant-collapse-item{
-  border-color:#eaeaea;
-}
->>>.online .ant-collapse-borderless{
-  background:transparent;
-}
->>>.online .ant-row-flex{
-  width:100%
+>>> .online .ant-collapse-content {
+  background: #fff;
 }
 
->>>.online form .ant-input-group .ant-select{
+>>> .online .ant-collapse {
+  font-size: 12px;
+  background: transparent;
+}
+>>> .online .ant-collapse-header {
+  padding: 9px 16px;
+}
+>>> .online .ant-collapse-borderless > .ant-collapse-item {
+  border-color: #eaeaea;
+}
+>>> .online .ant-collapse-borderless {
+  background: transparent;
+}
+>>> .online .ant-row-flex {
+  width: 100%;
+}
+
+>>> .online form .ant-input-group .ant-select {
   width: 95%;
 }
->>>.online form .ant-input-group .ant-input{
+>>> .online form .ant-input-group .ant-input {
   width: 95%;
 }
 </style>

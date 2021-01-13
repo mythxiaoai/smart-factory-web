@@ -23,8 +23,8 @@
     "md5": "^2.3.0",
     "nuxt": "^2.14.3",
     "vue-codemirror": "^4.0.6",
-    "vuedraggable": "^2.24.3"
-	"vue-ls": "^3.2.1"
+    "vuedraggable": "^2.24.3",
+	  "vue-ls": "^3.2.1"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.4",

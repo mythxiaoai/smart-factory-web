@@ -2,18 +2,19 @@
   <a-modal
     title="导入表结构"
     style="top: 20px"
-    :width="800"
+    :width="1000"
     v-model="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
   >
-    <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper table-operator">
       <a-form layout="inline">
         <a-form-item label="当前数据源">
           <a-select
             v-model="selectBase"
             @change="changeBase"
-            style="width: 240px"
+            style="width: 180px"
+            :dropdownMatchSelectWidth="false"
           >
             <a-select-option
               v-for="item in selectBaseList"
@@ -30,14 +31,17 @@
         <a-form-item label="表描述">
           <a-input placeholder="请输入" v-model="queryParam.tableComment" />
         </a-form-item>
-        <span class="table-page-search-submitButtons">
+        <!-- <span class="table-page-search-submitButtons"> -->
+        <a-form-item>
           <a-button type="primary" @click="$refs.table.refresh(true)"
             >查询</a-button
           >
           <a-button style="margin-left: 8px" @click="() => (queryParam = {})"
             >重置</a-button
           >
-        </span>
+        </a-form-item>
+
+        <!-- </span> -->
       </a-form>
     </div>
     <s-table
@@ -178,7 +182,7 @@ export default {
       let queryParam = {
         tables: this.selectedRowKeys,
         dbType: this.queryParam.dbType,
-        pollName:this.selectBase
+        pollName: this.selectBase,
       }
       this.$http
         .post('/generator/gen/importTable', queryParam, {

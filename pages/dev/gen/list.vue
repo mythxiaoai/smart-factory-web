@@ -1,9 +1,14 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper table-operator">
       <a-form layout="inline">
         <a-form-item label="数据源名称">
-          <a-select v-model="queryParam.pollName" style="width: 240px">
+          <a-select
+            v-model="queryParam.pollName"
+            allowClear
+            :dropdownMatchSelectWidth="false"
+            style="width: 180px"
+          >
             <a-select-option
               v-for="item in selectBaseList"
               :key="item.pollName"
@@ -19,14 +24,17 @@
           <a-input placeholder="请输入" v-model="queryParam.tableComment" />
         </a-form-item>
         <a-form-item label="表时间">
-          <a-range-picker v-model="range" />
+          <a-range-picker v-model="range" style="width: 200px" />
         </a-form-item>
-        <span class="table-page-search-submitButtons">
+        <!-- <span class="table-page-search-submitButtons"> -->
+        <a-form-item>
           <a-button type="primary" @click="$refs.table.refresh(true)"
             >查询</a-button
           >
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-        </span>
+        </a-form-item>
+
+        <!-- </span> -->
       </a-form>
     </div>
     <div class="table-operator">

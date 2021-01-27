@@ -65,7 +65,7 @@ export default {
             scopedSlots: { customRender: 'menuType' },
           },
           {
-            title: 'icon',
+            title: '菜单图标',
             dataIndex: 'icon',
             key: 'icon',
             // scopedSlots: { customRender: 'icon' },

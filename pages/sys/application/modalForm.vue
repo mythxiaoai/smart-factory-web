@@ -21,14 +21,14 @@
         </a-form-model-item>
 
         <a-form-model-item
-          label="应用账户"
+          label="应用ID"
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
           hasFeedback
           prop="clientId"
         >
           <a-input
-            placeholder="应用账户/应用标识"
+            placeholder="应用ID/应用标识"
             v-model="form.clientId"
             :read-only="isUpdate ? true : false"
           />

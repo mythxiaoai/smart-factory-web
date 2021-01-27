@@ -1,116 +1,107 @@
 import Vue from 'vue'
-//需要是函数
+import {api,http} from "@/plugins/http.js"
 
-export const state = function () {
+let businessNameUnique = async (rule, value, callback) => {
+  let res = await http.get("/generator/dev/business/check/business/name",{
+    businessName: value,
+  })
+  !res.result ? callback() : callback(new Error(res.message))
+}
+
+
+export const state = function() {
   return {
     //1：全局  2:表单   3：列表   4：数据库
     action: 1,
+    //1:表单预览  2 表格预览
+    preAction: 1,
+    //正在拖拽
+    draging:false,
+    //选中的是哪个
+    itemActive:-1,
+    //脚本列表
+    scriptList:[],
+    //显示弹框显示和隐藏
+    visible:false,
     form: {
+      //索引信息
       indexList: [
         {
           tableId: '',
-          indexColumn: '',
-          indexType: '',
-          indexName: ''
+          indexColumn: '',//索引字段
+          indexColumnShow: [],
+          indexType: '',//索引类型
+          indexName: ''//索引名称
         }
       ],
+      //表格
       table: {
-        tableName: '',
-        businessName: '',
+        tableName: '',//表名
+        businessName: '业务名称',//业务名称
         id: '',
         parentId: ''
       },
-      columnList: [
-        {
-          columnDescribe: '',
-          blankFlag: 1,
-          blankFlagShow:false,
-          defaultValue: '',
-          columnType: '',
-          id: '',
-          tableId: '',
-          pkFlag: 1,
-          pkFlagShow:true,
-          columnLength: '',
-          columnName: '',
-          place: ''
-        }
-      ],
-      formList: [
-        {
-          id: '',
-          queryMode: '',
-          subAttribute: '',
-          columnNameCn: '',
-          fromData: '',
-          subType: '',
-          editFlag: 1,
-          businessId: '',
-          queryFlag: 0,
-          createTime: '1971-09-30T10:50:21.599Z',
-          columnName: '',
-          sort: -9166199,
-          checkRule: '',
-          fromType: '',
-          displayFlag: 1,
-          scriptId: 'cb613727355c509f284e3035501db371',
-          checkRuleList: '',
-          indexList: [
-            {
-              indexColumn: '',
-              indexName: ''
-            }
-          ],
-        },
-        {
-          id: '',
-          queryMode: '',
-          subAttribute: '',
-          columnNameCn: '',
-          fromData: '',
-          subType: '',
-          editFlag: 1,
-          businessId: '',
-          queryFlag: 0,
-          createTime: '1971-09-30T10:50:21.599Z',
-          columnName: '',
-          sort: -9166199,
-          checkRule: '',
-          fromType: '',
-          displayFlag: 1,
-          scriptId: '',
-          checkRuleList: '',
-          indexList: [
-            {
-              indexColumn: '',
-              indexName: ''
-            }
-          ],
-        },
-      ],
       business: {
-        editStatus: '',
+        businessName: '',//业务名称
+        pageFlag: 1,//是否分页 0/1
+        pageFlagShow: true,//是否分页
+        editStatus: '',//编辑状态
         url: '',
-        pageFlag: 1,
-        pageFlagShow: true,
         id: '',
-        createTime: '1972-09-14T20:13:10.783Z',
-        releaseStatus: '',
-        businessName: '',
-        edition: -37794445
-      }
+      },
+      //字段信息
+      columnList: [
+        // {
+        //   columnName: '',//字段名称
+        //   columnDescribe: '',//描述
+        //   columnType: '',//字段类型
+        //   defaultValue: '',//默认值
+        //   columnLength: 255,//字段长度
+        //   place: '',//小数点位数
+        //   blankFlag: 1,//是否运行空值
+        //   id: '',
+        //   pkFlag: 0,
+        // }
+      ],
+      //表单
+      formList: [
+        // {
+        //   editFlag: 1,//修改是否显示
+        //   columnNameCn: '',//字段显示名
+        //   columnName: '',  //数据库字段名
+        //   subAttribute: '',//组件属性
+        //   checkRule: '', //验证规则
+        //   fromType: '',//数据来源类型
+        //   fromData: '', //数据来源
+        
+        //   queryFlag: 0,//查询是否显示
+        //   queryMode: '',//查询方式
+        //   displayFlag: 1,//列表是否显示
+        //   scriptId: '',//过滤id
+        //   id: '', 
+        //   subType: '',//组件类型
+        //   businessId: '',//业务ID
+        //   sort: 1, //排序
+        // },
+
+      ]
     },
     rules: {
       //全局
       table: {
         businessName: [
           { required: true, message: '不能为空~', trigger: 'blur' },
-        ],
+          { validator: businessNameUnique,trigger: 'blur', }
+        ]
       },
 
       //列表
       formList: [
-        { columnNameCn: [{ required: true, message: '不能为空~', trigger: 'blur' }], }
+        {
+          columnNameCn: [
+            { required: true, message: '不能为空~', trigger: 'blur' }
+          ]
+        }
       ],
 
       //数据库
@@ -121,10 +112,12 @@ export const state = function () {
               required: true,
               pattern: /[a-z]{2,}(_[a-z]+)*/,
               message: '请输入符合数据库字段命名规则',
-              trigger: 'blur',
-            },
+              trigger: 'blur'
+            }
           ],
-          columnType: [{ required: true, message: '不能为空~', trigger: 'blur' }],
+          columnType: [
+            { required: true, message: '不能为空~', trigger: 'blur' }
+          ]
         }
       ]
     }
@@ -135,6 +128,7 @@ export const mutations = {
   setAction(state, params) {
     state.action = params
   }
+
 }
 
 export const actions = {
@@ -143,4 +137,14 @@ export const actions = {
   }
 }
 
-export const getters = {}
+export const getters = {
+  hasData(state) {
+    return state.form.formList.filter(v=>!v.hide).length >0;
+  },
+  isUpdate(state) {
+    return !!state.form.business.id;
+  },
+  formList(state){
+    return state.form.formList.filter(v=>!v.hide);
+  }
+}

@@ -1,25 +1,31 @@
 <template>
   <a-card :bordered="false">
     <table-page v-bind="tablePageConfig">
+      <template #url="{ text }">
+        {{ text }}
+      </template>
+
       <template #table-operator>
         <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
       </template>
 
-      <span slot="operation" slot-scope="{text}">
+      <span slot="operation" slot-scope="{ text }">
         <a @click="handleUpdate(text)"> <a-icon type="edit" />修改 </a>
         <a-divider type="vertical" />
         <a-dropdown>
           <a class="ant-dropdown-link"> 更多 <a-icon type="down" /> </a>
           <a-menu slot="overlay">
-            <a-menu-itemText>
-              <a href="javascript:;" @click="handleFreeze(text.id)">功能测试</a>
-            </a-menu-itemText>
             <a-menu-item>
-              <a href="javascript:;" @click="handleUnfreeze(text.id)">发布/禁用</a>
+              <a href="javascript:;" @click="handleTest(text.id)">功能测试</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a href="javascript:;" @click="handleSendOrdisabled(text.id)"
+                >发布/禁用</a
+              >
             </a-menu-item>
 
             <a-menu-item>
-              <a href="javascript:;" @click="handlePassword(text)">生成代码</a>
+              <a href="javascript:;" @click="handleGenerate(text)">生成代码</a>
             </a-menu-item>
 
             <a-menu-item>
@@ -43,7 +49,7 @@ import modalForm from './modalForm.vue'
 export default {
   fetch({ store, params }) {},
   created() {
-    //this.list()
+    this.list()
   },
   mounted() {},
   data: function () {
@@ -84,25 +90,34 @@ export default {
         // ],
         getAsyncDate: null,
         columns: [
-          { title: '业务名称', dataIndex: 'username', key: 'username' },
-          { title: '编辑状态', dataIndex: 'realname', key: 'realname' },
-          { title: '版本', dataIndex: 'workNo', key: 'workNo' },
-        //   {
-        //     title: 'URL',
-        //     dataIndex: 'sex',
-        //     key: 'sex',
-        //     scopedSlots: { customRender: 'sex' },
-        //   },
-          { title: '创建时间', dataIndex: 'birthday', key: 'birthday' },
+          { title: '业务名称', dataIndex: 'businessName', key: 'businessName' },
+          {
+            title: '编辑状态',
+            dataIndex: 'editStatus',
+            key: 'editStatus',
+            customRender(v) {
+              return v == 'complete' ? '已完成' : '编辑中'
+            },
+          },
+          { title: '版本', dataIndex: 'edition', key: 'edition' },
+          {
+            title: 'URL',
+            dataIndex: 'url',
+            key: 'url',
+            scopedSlots: { customRender: 'url' },
+          },
+          { title: '创建时间', dataIndex: 'createTime', key: 'createTime' },
           { title: '手机号', dataIndex: 'phone', key: 'phone' },
           { title: '邮箱', dataIndex: 'email', key: 'email' },
           //{title: '负责部门',dataIndex: 'createTime', key: 'createTime'},
           //{title: '角色',dataIndex: 'roleIds', key: 'roleIds'},
           {
             title: '状态',
-            dataIndex: 'status',
-            key: 'status',
-            scopedSlots: { customRender: 'status' },
+            dataIndex: 'releaseStatus',
+            key: 'releaseStatus',
+            customRender(v) {
+              return v == 'published ' ? '已发布' : '未发布'
+            },
           },
           {
             title: '操作',
@@ -111,53 +126,38 @@ export default {
           },
         ],
       },
-
     }
   },
   methods: {
-    async handleResetPassword(username){
-      let res = await this.$api.system.sys.user.resetPassword.put({
-        username,
-        newPassword:"123456",
-      })
-      res.success && this.$message.success("重置成功~")
-      this.list()
-    },
-    async handleFreeze(id) {
-      await this.$api.system.sys.user.frozenBatch.put({
-        status: 2,
-        userIds: [id],
-      })
-      this.list()
-    },
-    async handleUnfreeze(id) {
-      await this.$api.system.sys.user.frozenBatch.put({
-        status: 1,
-        userIds: [id],
-      })
-      this.list()
-    },
     handleAdd() {
-      this.$refs.modalForm.visible = true
+      this.$store.state.online.visible = true
       this.$refs.modalForm.initForm()
     },
-    handlePassword(parmas) {
-      this.$refs.modalPassword.visible = true
-      let result = JSON.parse(JSON.stringify(parmas))
-      this.$refs.modalPassword.initForm(null,result)
-    },
     handleUpdate(data) {
-      this.$refs.modalForm.visible = true
+      this.$store.state.online.visible = true
       let result = JSON.parse(JSON.stringify(data))
       this.$refs.modalForm.initForm(null, result)
     },
     async handleDelete(id) {
-      await this.$api.system.sys.deleteBatch.delete([id])
-      this.list()
+      // await this.$api.system.sys.deleteBatch.delete([id])
+      // this.list()
+    },
+    async handleTest(id) {
+      // handleTest
+      this.$router.push({ path: '/dev/online/test', query: { id } })
+    },
+    async handleSendOrdisabled(id) {
+      // handleSendOrdisabled
+    },
+    async handleGenerate(id) {
+      // handleSendOrdisabled
     },
     list() {
       this.tablePageConfig.getAsyncDate = async (params, next) => {
-        let { result } = await this.$api.system.sys.user.list.get(params)
+        let { result } = await this.$http.get(
+          '/generator/dev/business/list',
+          params
+        )
         next(result.records, result.total)
       }
     },
@@ -165,7 +165,7 @@ export default {
   computed: {},
   watch: {},
   components: {
-    modalForm
+    modalForm,
   },
 }
 </script>

@@ -46,6 +46,8 @@ import { baseURL, LONGINPATH } from '@/assets/config/appConfig.js'
 
 function axiosFn(content, inject) {
   let { $axios, store, error } = content
+  //暴露给全局
+  window.$axios =  $axios;
   //baseURL
   $axios.defaults.baseURL = baseURL
   //超时

@@ -32,7 +32,6 @@ export default {
   computed: {
     data () {
       let res = {};
-      console.log(this.error);
       let {statusCode,message} = this.error;
       res.title = statusCode ;
       res.desc = message || messageArr[statusCode] || "错误";

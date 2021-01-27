@@ -2,25 +2,29 @@
  <!--文本框-->
  <template>
   <a-form-model-item
-    :label="columnNameCn"
+    :label="label"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-input type="password" placeholder="请输入" v-bind="subAttribute" />
+    <a-checkbox-group :options="data" />
   </a-form-model-item>
 </template>
 
 <script>
 export default {
   props: {
-    columnNameCn: {
+    label: {
       type: String,
-      default: '标题',
+      default: '多选',
     },
     subAttribute: {
       type: Object,
       default: () => ({}),
     },
+    data:{
+      type: Array,
+      default:()=>["A","B","C","D"]
+    }
   },
   created() {},
   mounted() {},

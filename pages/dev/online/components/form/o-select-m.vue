@@ -1,23 +1,23 @@
  <!--文本框-->
  <template>
   <a-form-model-item
-    :label="columnNameCn"
+    :label="label"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-  <!-- <a-select mode="tags" v-bind="subAttribute">
-    <a-select-option>nomal</a-select-option>
-    <a-select-option>unique</a-select-option>
-  </a-select> -->
+  <a-select mode="tags" default-value="" v-bind="subAttribute">
+    <a-select-option value="">请选择</a-select-option>
+    <a-select-option v-for="i in 5" :key="i">{{i}}</a-select-option>
+  </a-select>
   </a-form-model-item>
 </template>
 
 <script>
 export default {
   props: {
-    columnNameCn: {
+    label: {
       type: String,
-      default: '标题',
+      default: '下拉多选',
     },
     subAttribute: {
       type: Object,

@@ -1,20 +1,24 @@
  <!--文本框-->
  <template>
   <a-form-model-item
-    :label="columnNameCn"
+    :label="label"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-input type="password" placeholder="请输入" v-bind="subAttribute" />
+   <a-date-picker
+      show-time
+      format="YYYY-MM-DD HH:mm:ss"
+      placeholder="请选择"
+    />
   </a-form-model-item>
 </template>
 
 <script>
 export default {
   props: {
-    columnNameCn: {
+    label: {
       type: String,
-      default: '标题',
+      default: '时间',
     },
     subAttribute: {
       type: Object,

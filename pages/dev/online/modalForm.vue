@@ -1,15 +1,18 @@
 <template>
   <a-modal
-    :title="title"
+    :title="$store.state.online.form.table.businessName || ' '"
     width="100%"
-    :visible="visible"
+    :visible="$store.state.online.visible"
     :confirmLoading="confirmLoading"
-    @ok="handleOk"
-    @cancel="handleCancel"
-    cancelText="临时保存"
-    okText="保存"
+    @cancel="cancel"
     class="full_screen"
   >
+    <template #footer>
+      <div>
+        <a-button @click="tempSave"> 临时保存 </a-button>
+        <a-button type="primary" @click="save"> 保存 </a-button>
+      </div>
+    </template>
     <div class="content online">
       <div class="componet">
         <div class="title">组件列表</div>
@@ -26,17 +29,31 @@
         <a-tabs v-model="$store.state.online.action">
           <a-tab-pane :key="1" tab="全局">
             <div class="scoll">
-              <globalConfig ref="globalConfig"></globalConfig>
+              <confGlobal ref="globalConfig"></confGlobal>
             </div>
           </a-tab-pane>
-          <a-tab-pane :key="2" tab="表单" force-render>
-            <div class="scoll"><formConfig ref="formConfig"></formConfig></div>
+          <a-tab-pane
+            v-if="$store.getters['online/hasData']"
+            :key="2"
+            tab="表单"
+            force-render
+          >
+            <div class="scoll"><confFrom ref="formConfig"></confFrom></div>
           </a-tab-pane>
-          <a-tab-pane :key="3" tab="列表">
-            <div class="scoll"><tableConfig></tableConfig></div>
+          <a-tab-pane
+            v-if="$store.getters['online/hasData']"
+            :key="3"
+            tab="列表"
+          >
+            <div class="scoll"><confTable></confTable></div>
           </a-tab-pane>
-          <a-tab-pane :key="4" tab="数据库" force-render>
-            <div class="scoll"><dbConfig ref="dbConfig"></dbConfig></div>
+          <a-tab-pane
+            v-if="$store.getters['online/hasData']"
+            :key="4"
+            tab="数据库"
+            force-render
+          >
+            <div class="scoll"><confDb></confDb></div>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -46,51 +63,71 @@
 
 <script>
 import componentSelect from './components/componentSelect'
-import dbConfig from './components/dbConfig'
-import formConfig from './components/formConfig'
-import globalConfig from './components/globalConfig'
-import tableConfig from './components/tableConfig'
+import confDb from './components/confDb'
+import confFrom from './components/confFrom'
+import confGlobal from './components/confGlobal'
+import confTable from './components/confTable'
 import preview from './components/preview'
-
+import Vue from 'vue'
+let Ofrom
 export default {
   components: {
     componentSelect,
-    dbConfig,
-    formConfig,
-    globalConfig,
-    tableConfig,
+    confDb,
+    confFrom,
+    confGlobal,
+    confTable,
     preview,
   },
   name: 'modalForm',
-  created() {},
+  created() {
+    Ofrom = JSON.parse(JSON.stringify(this.$store.state.online.form));
+    console.log(this.$store.state.online);
+    console.log(this);
+  },
   data() {
     return {
-      title:"业务名称",
-      visible:true,
-      confirmLoading:false,
+      confirmLoading: false,
     }
   },
   computed: {},
   methods: {
     initForm() {},
-    async handleOk() {
+    async save() {
       let form = this.$store.state.online.form
       // 触发表单验证
       this.$store.state.online.action = 1
       await this.$refs.globalConfig.$refs.globalConfig.validate()
 
       this.$store.state.online.action = 2
-     
+
       await this.$refs.formConfig.$refs.formConfig.validate()
 
       this.$store.state.online.action = 4
       await this.$refs.dbConfig.$refs.dbConfig.validate()
     },
-    handleCancel() {
-      this.visible = false
-      // 值还原
-      //取消验证状态
-     // this.close()
+    async tempSave() {
+      let res = await this.$http.post(
+        '/generator/dev/business/temp/save',
+        this.$store.state.online.form
+      )
+      if (res.success) {
+        this.$store.state.online.visible = false
+        this.$emit('refresh')
+      }
+    },
+    cancel() {
+      this.$store.state.online.visible = false;
+      this.$store.state.online.form =JSON.parse(JSON.stringify(Ofrom));
+    },
+  },
+  watch: {
+    '$store.state.online.action'(val) {
+      if (this.$store.state.online.action == 2) {
+        this.$store.state.online.preAction = 1
+      } else if (this.$store.state.online.action == 3) {
+        this.$store.state.online.preAction = 2
+      }
     },
   },
 }
@@ -121,7 +158,6 @@ export default {
   }
   .body {
     flex: 1;
-   
   }
   .config {
     width: 350px;
@@ -143,6 +179,9 @@ export default {
 }
 </style>
 <style scoped>
+.full_screen >>> .ant-modal-title {
+  height: 22px;
+}
 >>> .ant-modal-body {
   padding: 0;
 }
@@ -154,9 +193,9 @@ export default {
   height: 100%;
 }
 
->>>.online .config .ant-form-item-label{
-  text-align:left;
-  padding-left:16px;
+>>> .online .config .ant-form-item-label {
+  text-align: left;
+  padding-left: 16px;
 }
 
 >>> .online .ant-collapse-content {
@@ -185,5 +224,6 @@ export default {
 }
 >>> .online form .ant-input-group .ant-input {
   width: 95%;
+  float: none;
 }
 </style>

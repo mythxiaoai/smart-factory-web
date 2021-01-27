@@ -1,7 +1,7 @@
  <!--文本框-->
  <template>
   <a-form-model-item
-    :label="columnNameCn"
+    :label="label"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
@@ -12,9 +12,9 @@
 <script>
 export default {
   props: {
-    columnNameCn: {
+    label: {
       type: String,
-      default: '标题',
+      default: '开关',
     },
     subAttribute: {
       type: Object,

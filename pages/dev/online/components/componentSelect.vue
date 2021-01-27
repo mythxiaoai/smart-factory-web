@@ -1,7 +1,7 @@
 组件选择
 <template>
   <draggable
-    class="components"
+    class="components js_components"
     tag="ul"
     :list="components"
     :options="{
@@ -9,9 +9,18 @@
       sort: false,
       animation: 100,
     }"
-      
+    @start="start"
+    @end="end"
+    ref="componentsSelect"
   >
-    <li class="item" v-for="v of components" :key="v.title">
+    <li
+      class="item"
+      v-for="(v, i) of components"
+      :key="i"
+      :columnNameCn="v.title"
+      :subType="v.componentName"
+      type="selectAdd"
+    >
       <div class="title">{{ v.title }}</div>
       <div
         class="body"
@@ -26,6 +35,17 @@ import draggable from 'vuedraggable'
 export default {
   components: {
     draggable,
+  },
+  mounted() {
+    let mark = true
+    this.$refs.componentsSelect.$el.ondragover = function (e) {
+      console.log('ondragover')
+      e.preventDefault()
+    }
+    this.$refs.componentsSelect.$el.ondrop = function (e) {
+      console.log('ondrop')
+      e.preventDefault()
+    }
   },
   data() {
     return {
@@ -78,10 +98,28 @@ export default {
       ],
     }
   },
+  methods: {
+    start(e) {
+      // console.log("start");
+      this.$store.state.online.preAction = 1
+      this.$store.state.online.draging = true
+    },
+    add(e) {},
+    end(e) {
+      console.log('end-select', e)
+      this.$store.state.online.draging = false
+    },
+  },
 }
 </script>
 
 <style scoped lang="less">
+// .delClass{
+//   cursor: no-drop!important;
+//   .item{
+//     cursor: no-drop!important;
+//   }
+// }
 .components {
   display: flex;
   flex-wrap: wrap;
@@ -96,6 +134,7 @@ export default {
     margin-bottom: 8px;
     font-size: 12px;
     user-select: none;
+    cursor: move;
     .title {
       background: #fafafa;
       height: 22px;
@@ -111,4 +150,14 @@ export default {
     }
   }
 }
+</style>
+<style scoped>
+/* >>> .delGhost {
+  position: absolute;
+  z-index: -1;
+  background: red !important;
+  height: 0;
+  width: 0;
+  font-size: 0;
+} */
 </style>

@@ -80,7 +80,7 @@ export default {
             scopedSlots: { customRender: 'index' },
           },
           { title: '应用名称', dataIndex: 'clientName', key: 'clientName' },
-          { title: '应用账号', dataIndex: 'clientId', key: 'clientId' },
+          { title: '应用账户', dataIndex: 'clientId', key: 'clientId' },
           { title: '应用密码', dataIndex: 'clientSecret', key: 'clientSecret' },
           {
             title: '操作',

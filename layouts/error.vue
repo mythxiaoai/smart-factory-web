@@ -33,9 +33,9 @@ export default {
     data () {
       let res = {};
       let {statusCode,message} = this.error;
+      console.error(this.error);
       res.title = statusCode ;
       res.desc = message || messageArr[statusCode] || "错误";
-      console.log(message,res.desc);
       res.img = imgs[statusCode] || imgs["other"];
       return res;
     }

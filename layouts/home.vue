@@ -75,7 +75,7 @@
                 size="small"
                 src="https://preview.pro.loacg.com/avatar2.jpg"
               />
-              <span>欢迎您，{{userInfo.realname}}</span>
+              <span>欢迎您，{{ userInfo.realname }}</span>
             </span>
             <a-menu slot="overlay">
               <!-- <a-menu-item key="0">
@@ -157,7 +157,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('security', ['permission','userInfo']),
+    ...mapState('security', ['permission', 'userInfo']),
     ...mapGetters('security', ['menu']),
   },
   components: {
@@ -178,6 +178,7 @@ export default {
         //选中
         this.selectedKeys = [this.$route.path]
         //打开菜单
+        if (!currItem.parentId) return
         let res = []
         while (true) {
           currItem = menu.filter((v) => v.id == currItem.parentId)[0]

@@ -68,6 +68,8 @@ function axiosFn(content, inject) {
   response
   */
   $axios.onResponse((response) => {
+    //非json不处理
+    if(!!!~response.headers['content-type'].indexOf('application/json')) return response;
     //config data headers request
     let type = 'success'
     let url = response.config.url

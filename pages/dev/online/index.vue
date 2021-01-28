@@ -4,10 +4,19 @@
 
 <script>
 export default {
-
+  async asyncData(content) {},
+  fetch({ store, params }) {},
+  created() {},
+  mounted() {},
+  data: function() {
+    return {}
+  },
+  methods: {},
+  computed: {},
+  watch: {},
+  components: {}
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>

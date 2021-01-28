@@ -144,7 +144,7 @@ export default {
     },
     async handleTest(id) {
       // handleTest
-      this.$router.push({ path: '/dev/online/index', query: { id } })
+      this.$router.push({ path: '/dev/online', query: { id } })
     },
     async handleSendOrdisabled(id) {
       // handleSendOrdisabled

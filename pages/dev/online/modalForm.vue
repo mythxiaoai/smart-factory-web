@@ -1,3 +1,4 @@
+--弹框页面--
 <template>
   <a-modal
     :title="$store.state.online.form.table.businessName || ' '"
@@ -62,11 +63,17 @@
 </template>
 
 <script>
+//组件选择
 import componentSelect from './components/componentSelect'
+//数据库配置
 import confDb from './components/confDb'
+//表单配置
 import confFrom from './components/confFrom'
+//全局配置
 import confGlobal from './components/confGlobal'
+//表格配置
 import confTable from './components/confTable'
+//中间预览
 import preview from './components/preview'
 import Vue from 'vue'
 let Ofrom

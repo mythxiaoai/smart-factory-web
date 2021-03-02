@@ -1,7 +1,7 @@
 组件选择
 <template>
   <draggable
-    class="components js_components"
+    class="components"
     tag="ul"
     :list="components"
     :options="{
@@ -37,15 +37,7 @@ export default {
     draggable,
   },
   mounted() {
-    let mark = true
-    this.$refs.componentsSelect.$el.ondragover = function (e) {
-      console.log('ondragover')
-      e.preventDefault()
-    }
-    this.$refs.componentsSelect.$el.ondrop = function (e) {
-      console.log('ondrop')
-      e.preventDefault()
-    }
+   
   },
   data() {
     return {

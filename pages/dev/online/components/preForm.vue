@@ -1,6 +1,7 @@
+--中间表单预览--
 <template>
   <draggable
-    class="preform"
+    class="preform "
     v-model="components"
     :options="{ group: { name: 'component' }, animation: 100 }"
     @end="end"
@@ -42,6 +43,7 @@
 </template>
 
 <script>
+
 import draggable from 'vuedraggable'
 import oText from './form/o-text'
 import oPassword from './form/o-password'
@@ -108,9 +110,32 @@ export default {
   async asyncData(content) {},
   fetch({ store, params }) {},
   async created() {
-    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
+    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+    
   },
   mounted() {
+
+     let mark = true
+//     this.$refs.preform.$el.ondragover = function (e) {
+//       console.log('ondragover')
+//       console.log(e)
+//       e.preventDefault()
+//     }
+let dom  = this.$refs.preform.$el
+this.$refs.preform.$el.onmousedown =function(e){
+  console.log("onmousedown",e);
+  document.onmousemove=function(e){
+    console.log("move",e);
+  }
+  document.onmouseup=function(e){
+    console.log("onmouseup",e);
+
+  }
+
+}
+
+    
+
     
   },
   data: function () {
@@ -120,8 +145,10 @@ export default {
   },
   methods: {
     end(e) {
-      //console.log('end', e)
+      console.log('end', e)
       //this.$store.state.online.itemActive = e.newIndex;
+      document.onmousemove = null;
+      document.onmouseup = null;
     },
     sort(e){
       if(e.clone.type == "selectAdd") return;
@@ -184,7 +211,7 @@ export default {
       this.$store.state.online.itemActive = e.clone.dataset.id;
     },
     move(e){
-      console.log("move",e);
+      //console.log("move",e);
       //e.to.style.cursor = "no-drop";
       // let js_componentsDom;
       // if(~e.to.className.indexOf("js_components")){

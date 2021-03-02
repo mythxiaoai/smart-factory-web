@@ -1,3 +1,5 @@
+列表页面
+
 <template>
   <a-card :bordered="false">
     <table-page v-bind="tablePageConfig">
@@ -166,6 +168,13 @@ export default {
   watch: {},
   components: {
     modalForm,
+  },
+  destroyed: function () {
+    console.group('destroyed 销毁完成状态===============》')
+    console.log('%c%s', 'color:red', 'el     : ' + this.$el)
+    console.log(this.$el)
+    console.log('%c%s', 'color:red', 'data   : ' + this.$data)
+    console.log('%c%s', 'color:red', 'message: ' + this.message)
   },
 }
 </script>
